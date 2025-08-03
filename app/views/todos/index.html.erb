@@ -1,0 +1,110 @@
+<div class="px-4 py-6 sm:px-0">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Todos</h1>
+    <%= link_to "Add Todo", new_todo_path, class: "bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium" %>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Pending Todos -->
+    <div class="bg-white rounded-lg shadow">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">
+          Pending (<%= @pending_todos.count %>)
+        </h3>
+      </div>
+      <div class="p-6">
+        <% if @pending_todos.any? %>
+          <div class="space-y-4">
+            <% @pending_todos.each do |todo| %>
+              <div class="flex items-start space-x-4 p-4 border rounded-lg hover:bg-gray-50">
+                <%= form_with model: todo, url: toggle_complete_todo_path(todo), method: :patch, local: true, class: "flex-shrink-0 mt-1" do |form| %>
+                  <button type="submit" class="w-5 h-5 border-2 border-gray-300 rounded hover:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors">
+                    <i class="fas fa-check text-xs text-transparent"></i>
+                  </button>
+                <% end %>
+                
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-sm font-medium text-gray-900"><%= todo.title %></h4>
+                  <% if todo.description.present? %>
+                    <p class="text-sm text-gray-600 mt-1"><%= truncate(todo.description, length: 100) %></p>
+                  <% end %>
+                  
+                  <div class="flex items-center space-x-4 mt-2">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium <%= todo.priority_color %> bg-opacity-10">
+                      <%= todo.priority.humanize %> Priority
+                    </span>
+                    
+                    <% if todo.due_date %>
+                      <span class="text-xs text-gray-500">
+                        <i class="fas fa-calendar mr-1"></i>
+                        Due <%= todo.due_date.strftime("%b %d") %>
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+                
+                <div class="flex space-x-2">
+                  <%= link_to edit_todo_path(todo), class: "text-gray-400 hover:text-gray-600" do %>
+                    <i class="fas fa-edit text-sm"></i>
+                  <% end %>
+                  <%= link_to todo, method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-400 hover:text-red-600" do %>
+                    <i class="fas fa-trash text-sm"></i>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-8">
+            <i class="fas fa-check-circle text-4xl text-gray-400 mb-4"></i>
+            <p class="text-gray-500">All caught up! No pending todos.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Completed Todos -->
+    <div class="bg-white rounded-lg shadow">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">
+          Completed (<%= @completed_todos.count %>)
+        </h3>
+      </div>
+      <div class="p-6">
+        <% if @completed_todos.any? %>
+          <div class="space-y-4 max-h-96 overflow-y-auto">
+            <% @completed_todos.limit(10).each do |todo| %>
+              <div class="flex items-start space-x-4 p-4 border rounded-lg bg-gray-50">
+                <%= form_with model: todo, url: toggle_complete_todo_path(todo), method: :patch, local: true, class: "flex-shrink-0 mt-1" do |form| %>
+                  <button type="submit" class="w-5 h-5 border-2 border-green-500 bg-green-500 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors">
+                    <i class="fas fa-check text-xs text-white"></i>
+                  </button>
+                <% end %>
+                
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-sm font-medium text-gray-500 line-through"><%= todo.title %></h4>
+                  <% if todo.completed_at %>
+                    <p class="text-xs text-gray-400 mt-1">
+                      Completed <%= time_ago_in_words(todo.completed_at) %> ago
+                    </p>
+                  <% end %>
+                </div>
+                
+                <div class="flex space-x-2">
+                  <%= link_to todo, method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-400 hover:text-red-600" do %>
+                    <i class="fas fa-trash text-sm"></i>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-8">
+            <i class="fas fa-tasks text-4xl text-gray-400 mb-4"></i>
+            <p class="text-gray-500">No completed todos yet.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

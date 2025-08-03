@@ -1,0 +1,152 @@
+<div class="px-4 py-6 sm:px-0">
+  <div class="md:flex md:items-center md:justify-between mb-8">
+    <div class="flex-1 min-w-0">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+        Books
+      </h2>
+      <p class="mt-1 text-sm text-gray-500">
+        Track your reading progress and manage your book collection.
+      </p>
+    </div>
+    <div class="mt-4 flex md:mt-0 md:ml-4">
+      <%= link_to new_book_path, class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700" do %>
+        <i class="fas fa-plus mr-2"></i>
+        Add Book
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white shadow rounded-lg mb-6">
+    <div class="px-4 py-5 sm:p-6">
+      <%= form_with url: books_path, method: :get, local: true, class: "flex flex-wrap items-center gap-4" do |form| %>
+        <div class="flex-1 min-w-0">
+          <%= form.text_field :search, placeholder: "Search books...", value: params[:search], class: "block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" %>
+        </div>
+        <div>
+          <%= form.select :status, options_for_select([
+            ['All Status', ''],
+            ['Not Started', 'not_started'],
+            ['In Progress', 'in_progress'],
+            ['Completed', 'completed'],
+            ['Paused', 'paused']
+          ], params[:status]), {}, { class: "block border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" } %>
+        </div>
+        <div>
+          <%= form.submit "Filter", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700" %>
+        </div>
+        <% if params[:search].present? || params[:status].present? %>
+          <%= link_to "Clear", books_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Books Grid -->
+  <% if @books.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @books.each do |book| %>
+        <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
+          <div class="px-4 py-5 sm:p-6">
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex-1">
+                <h3 class="text-lg font-medium text-gray-900 truncate">
+                  <%= link_to book.title, book_path(book), class: "hover:text-indigo-600" %>
+                </h3>
+                <% if book.author.present? %>
+                  <p class="text-sm text-gray-600">by <%= book.author %></p>
+                <% end %>
+              </div>
+              <div class="flex flex-col items-end space-y-1">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= book.status == 'completed' ? 'bg-green-100 text-green-800' : book.status == 'in_progress' ? 'bg-blue-100 text-blue-800' : book.status == 'paused' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800' %>">
+                  <%= book.status.humanize %>
+                </span>
+                <% if book.has_pdf? %>
+                  <span class="text-xs text-indigo-600">
+                    <i class="fas fa-file-pdf"></i> PDF
+                  </span>
+                <% end %>
+              </div>
+            </div>
+            
+            <% if book.description.present? %>
+              <p class="text-sm text-gray-500 mb-4 line-clamp-2"><%= truncate(book.description, length: 100) %></p>
+            <% end %>
+
+            <!-- Progress Bar -->
+            <div class="mb-4">
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-gray-500">Progress</span>
+                <span class="font-medium text-gray-900"><%= book.progress_percentage %>%</span>
+              </div>
+              <div class="mt-2 bg-gray-200 rounded-full h-2">
+                <div class="bg-green-600 h-2 rounded-full progress-bar transition-all duration-500 ease-out" style="width: <%= book.progress_percentage %>%"></div>
+              </div>
+              <% if book.total_pages.present? && book.current_page.present? %>
+                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>Page <%= book.current_page %></span>
+                  <span>of <%= book.total_pages %></span>
+                </div>
+              <% end %>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-2 text-center text-xs text-gray-500 mb-4">
+              <div>
+                <div class="font-medium text-gray-900"><%= book.chapters.count %></div>
+                <div>Chapters</div>
+              </div>
+              <div>
+                <div class="font-medium text-gray-900"><%= book.chapters_progress_percentage %>%</div>
+                <div>Chapters Done</div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-between items-center">
+              <div class="flex space-x-2">
+                <%= link_to book_path(book), class: "text-indigo-600 hover:text-indigo-900 text-sm" do %>
+                  <i class="fas fa-eye"></i>
+                <% end %>
+                <% if book.has_pdf? %>
+                  <%= link_to viewer_book_path(book), class: "text-purple-600 hover:text-purple-900 text-sm" do %>
+                    <i class="fas fa-book-reader"></i>
+                  <% end %>
+                <% end %>
+                <%= link_to edit_book_path(book), class: "text-gray-600 hover:text-gray-900 text-sm" do %>
+                  <i class="fas fa-edit"></i>
+                <% end %>
+                <%= link_to book_path(book), method: :delete, confirm: "Are you sure?", class: "text-red-600 hover:text-red-900 text-sm" do %>
+                  <i class="fas fa-trash"></i>
+                <% end %>
+              </div>
+              <% if book.isbn.present? %>
+                <div class="text-xs text-gray-400">
+                  ISBN: <%= book.isbn %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-12">
+      <i class="fas fa-book text-6xl text-gray-300 mb-4"></i>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">No books found</h3>
+      <p class="text-gray-500 mb-6">
+        <% if params[:search].present? || params[:status].present? %>
+          Try adjusting your search criteria or filters.
+        <% else %>
+          Get started by adding your first book.
+        <% end %>
+      </p>
+      <% unless params[:search].present? || params[:status].present? %>
+        <%= link_to new_book_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700" do %>
+          <i class="fas fa-plus mr-2"></i>
+          Add Your First Book
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
