@@ -31,6 +31,7 @@
               <%= link_to "Courses", courses_path, class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium #{'border-indigo-500 text-gray-900' if current_page?(courses_path)}" %>
               <%= link_to "Books", books_path, class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium #{'border-indigo-500 text-gray-900' if current_page?(books_path)}" %>
               <%= link_to "Articles", articles_path, class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium #{'border-indigo-500 text-gray-900' if current_page?(articles_path)}" %>
+              <%= link_to "Notes", notes_path, class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium #{'border-indigo-500 text-gray-900' if current_page?(notes_path)}" %>
               <%= link_to "Calendar", calendar_events_path, class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium #{'border-indigo-500 text-gray-900' if current_page?(calendar_events_path)}" %>
               <%= link_to "Todos", todos_path, class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium #{'border-indigo-500 text-gray-900' if current_page?(todos_path)}" %>
             </div>
@@ -61,6 +62,9 @@
     <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
       <%= yield %>
     </main>
+
+    <!-- Toast Notifications -->
+    <%= render 'shared/toast' %>
 
     <!-- Custom JavaScript -->
     <script>

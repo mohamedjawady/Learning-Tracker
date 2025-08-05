@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_01_165708) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_05_024720) do
   create_table "articles", force: :cascade do |t|
     t.string "title"
     t.string "author"
@@ -96,10 +96,28 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_01_165708) do
     t.index ["course_id"], name: "index_labs_on_course_id"
   end
 
+  create_table "notes", force: :cascade do |t|
+    t.string "title", limit: 255, null: false
+    t.text "content"
+    t.integer "parent_id"
+    t.integer "position", default: 0
+    t.string "tags", limit: 255
+    t.integer "user_id"
+    t.string "notable_type", limit: 255
+    t.integer "notable_id"
+    t.boolean "is_folder", default: false
+    t.string "color", limit: 255, default: "#ffffff"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["notable_type", "notable_id"], name: "index_notes_on_notable"
+    t.index ["parent_id"], name: "index_notes_on_parent_id"
+    t.index ["position"], name: "index_notes_on_position"
+  end
+
   create_table "todos", force: :cascade do |t|
     t.string "title"
     t.text "description"
-    t.string "priority"
+    t.integer "priority"
     t.date "due_date"
     t.boolean "completed"
     t.datetime "completed_at"

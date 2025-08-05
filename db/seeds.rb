@@ -287,6 +287,64 @@ CalendarEvent.create!([
   }
 ])
 
+# Create sample notes
+puts "Creating notes..."
+
+# Create some global notes
+study_folder = Note.create!(
+  title: "Study Notes",
+  is_folder: true,
+  color: "#FEF3C7",
+  position: 1
+)
+
+Note.create!(
+  title: "Learning Strategy",
+  content: "<h2>My Learning Strategy</h2><p>Focus on <strong>practical projects</strong> while studying theory.</p><ul><li>Code along with tutorials</li><li>Build personal projects</li><li>Take detailed notes</li></ul>",
+  parent: study_folder,
+  position: 1
+)
+
+Note.create!(
+  title: "Daily Learning Schedule",
+  content: "<h3>Morning (9-11 AM)</h3><p>📚 Read technical books</p><h3>Afternoon (2-4 PM)</h3><p>💻 Hands-on coding</p><h3>Evening (7-8 PM)</h3><p>📝 Review and note-taking</p>",
+  parent: study_folder,
+  position: 2
+)
+
+# Create course-specific notes
+course1_notes_folder = Note.create!(
+  title: "Rails Course Notes",
+  notable: course1,
+  is_folder: true,
+  color: "#DBEAFE",
+  position: 1
+)
+
+Note.create!(
+  title: "MVC Architecture",
+  content: "<h2>Model-View-Controller Pattern</h2><p>Rails follows the MVC architectural pattern:</p><ul><li><strong>Model:</strong> Data and business logic</li><li><strong>View:</strong> User interface presentation</li><li><strong>Controller:</strong> Handles user input and coordinates model/view</li></ul><p>This separation makes code more maintainable and scalable.</p>",
+  notable: course1,
+  parent: course1_notes_folder,
+  position: 1
+)
+
+Note.create!(
+  title: "ActiveRecord Tips",
+  content: "<h3>Important ActiveRecord Methods</h3><code>User.find(1)</code> - Find by ID<br><code>User.where(name: 'John')</code> - Filter records<br><code>User.create(name: 'Jane')</code> - Create new record<br><br><p><em>Remember to use strong parameters in controllers!</em></p>",
+  notable: course1,
+  parent: course1_notes_folder,
+  position: 2
+)
+
+# Create book-specific notes
+book_notes = Note.create!(
+  title: "Key Insights from Clean Code",
+  notable: book1,
+  content: "<h2>Clean Code Principles</h2><blockquote>Clean code is simple and direct. Clean code reads like well-written prose.</blockquote><p><strong>Main principles:</strong></p><ol><li>Meaningful names</li><li>Small functions</li><li>Clear comments (when necessary)</li><li>Consistent formatting</li></ol>",
+  position: 1
+)
+
 puts "✅ Database seeded successfully!"
 puts ""
 puts "📊 Created:"
@@ -298,6 +356,7 @@ puts "  - #{Video.count} videos"
 puts "  - #{Lab.count} labs"
 puts "  - #{Todo.count} todos"
 puts "  - #{CalendarEvent.count} calendar events"
+puts "  - #{Note.count} notes"
 puts ""
 puts "🚀 Your learning tracker is ready to go!"
 puts "   Visit http://localhost:3000 to get started"

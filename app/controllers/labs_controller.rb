@@ -17,7 +17,7 @@ class LabsController < ApplicationController
     @lab = @course.labs.build(lab_params)
     
     if @lab.save
-      redirect_to course_path(@course), notice: 'Lab was successfully created.'
+      redirect_to course_path(@course), notice: "🧪 Lab '#{@lab.title}' was successfully created!"
     else
       render :new
     end
@@ -28,7 +28,7 @@ class LabsController < ApplicationController
 
   def update
     if @lab.update(lab_params)
-      redirect_to course_path(@lab.course), notice: 'Lab was successfully updated.'
+      redirect_to course_path(@lab.course), notice: "✏️ Lab '#{@lab.title}' was successfully updated!"
     else
       render :edit
     end
@@ -36,12 +36,12 @@ class LabsController < ApplicationController
 
   def destroy
     @lab.destroy
-    redirect_to course_path(@lab.course), notice: 'Lab was successfully deleted.'
+    redirect_to course_path(@lab.course), notice: "🗑️ Lab '#{@lab.title}' was successfully deleted!"
   end
 
   def complete
     @lab.update(completed: true, completed_at: Time.current)
-    redirect_back(fallback_location: root_path, notice: 'Lab marked as complete!')
+    redirect_back(fallback_location: root_path, notice: "🧪 Lab '#{@lab.title}' completed! Excellent hands-on work!")
   end
 
   private

@@ -19,19 +19,19 @@ Rails.application.routes.draw do
   end
 
   # Individual completion routes
-  resources :chapters, only: [] do
+  resources :chapters, only: [:show, :edit, :update, :destroy] do
     member do
       patch :complete
     end
   end
   
-  resources :videos, only: [] do
+  resources :videos, only: [:show, :edit, :update, :destroy] do
     member do
       patch :complete
     end
   end
   
-  resources :labs, only: [] do
+  resources :labs, only: [:show, :edit, :update, :destroy] do
     member do
       patch :complete
     end
@@ -56,6 +56,13 @@ Rails.application.routes.draw do
   resources :todos do
     member do
       patch :toggle_complete
+    end
+  end
+
+  # Notes system
+  resources :notes do
+    member do
+      patch :move
     end
   end
 

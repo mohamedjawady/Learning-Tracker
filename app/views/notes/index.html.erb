@@ -1,0 +1,96 @@
+<div class="px-4 py-6 sm:px-0">
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">
+        <i class="fas fa-sticky-note mr-3 text-yellow-500"></i>
+        Notes
+        <% if @notable %>
+          <span class="text-xl text-gray-600">for <%= @notable.class.name %>: <%= @notable.title %></span>
+        <% end %>
+      </h1>
+      <p class="text-gray-600 mt-2">Organize your learning notes with folders and rich text editing</p>
+    </div>
+    <div class="flex space-x-3">
+      <%= link_to "New Folder", new_note_path(notable_type: params[:notable_type], notable_id: params[:notable_id], is_folder: true), 
+          class: "bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md text-sm font-medium" %>
+      <%= link_to "New Note", new_note_path(notable_type: params[:notable_type], notable_id: params[:notable_id]), 
+          class: "bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium" %>
+    </div>
+  </div>
+
+  <!-- Quick Add Forms -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Quick Add Note -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">
+        <i class="fas fa-plus-circle mr-2 text-indigo-500"></i>
+        Quick Add Note
+      </h3>
+      <%= form_with model: @new_note, url: notes_path(notable_type: params[:notable_type], notable_id: params[:notable_id]), local: true, class: "space-y-4" do |form| %>
+        <div>
+          <%= form.text_field :title, placeholder: "Note title...", 
+              class: "block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" %>
+        </div>
+        <div>
+          <%= form.text_area :content, rows: 3, placeholder: "Quick note content...", 
+              class: "block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" %>
+        </div>
+        <div class="flex justify-end">
+          <%= form.submit "Add Note", class: "bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Quick Add Folder -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">
+        <i class="fas fa-folder-plus mr-2 text-yellow-500"></i>
+        Quick Add Folder
+      </h3>
+      <%= form_with model: @new_folder, url: notes_path(notable_type: params[:notable_type], notable_id: params[:notable_id]), local: true, class: "space-y-4" do |form| %>
+        <%= form.hidden_field :is_folder, value: true %>
+        <div>
+          <%= form.text_field :title, placeholder: "Folder name...", 
+              class: "block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" %>
+        </div>
+        <div>
+          <%= form.text_field :tags, placeholder: "Tags (comma separated)...", 
+              class: "block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" %>
+        </div>
+        <div class="flex justify-end">
+          <%= form.submit "Create Folder", class: "bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md text-sm font-medium" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Notes Tree -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-lg font-medium text-gray-900">
+        <i class="fas fa-sitemap mr-2"></i>
+        Notes Hierarchy
+      </h2>
+    </div>
+    
+    <div class="p-6">
+      <% if @notes.any? %>
+        <div class="space-y-2" data-controller="sortable">
+          <%= render partial: 'notes/note_tree', collection: @notes, as: :note, locals: { depth: 0 } %>
+        </div>
+      <% else %>
+        <div class="text-center py-12">
+          <i class="fas fa-sticky-note text-4xl text-gray-400 mb-4"></i>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">No notes yet</h3>
+          <p class="text-gray-500 mb-6">Get started by creating your first note or folder</p>
+          <div class="flex justify-center space-x-3">
+            <%= link_to "Create Note", new_note_path(notable_type: params[:notable_type], notable_id: params[:notable_id]), 
+                class: "bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium" %>
+            <%= link_to "Create Folder", new_note_path(notable_type: params[:notable_type], notable_id: params[:notable_id], is_folder: true), 
+                class: "bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md text-sm font-medium" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

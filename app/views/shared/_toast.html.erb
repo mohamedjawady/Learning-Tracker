@@ -1,0 +1,32 @@
+<!-- app/views/shared/_toast.html.erb -->
+<% if notice %>
+  <div id="toast-container" class="fixed top-4 right-4 z-50">
+    <div data-controller="toast" 
+         class="bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg transform transition-all duration-300 ease-in-out opacity-0 translate-y-2 max-w-sm">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <i class="fas fa-check-circle mr-3 text-lg"></i>
+          <span data-toast-target="message"><%= notice %></span>
+        </div>
+        <button data-action="click->toast#dismiss" class="ml-4 text-white hover:text-gray-200">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+<% elsif alert %>
+  <div id="toast-container" class="fixed top-4 right-4 z-50">
+    <div data-controller="toast" 
+         class="bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg transform transition-all duration-300 ease-in-out opacity-0 translate-y-2 max-w-sm">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <i class="fas fa-exclamation-triangle mr-3 text-lg"></i>
+          <span data-toast-target="message"><%= alert %></span>
+        </div>
+        <button data-action="click->toast#dismiss" class="ml-4 text-white hover:text-gray-200">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+<% end %>

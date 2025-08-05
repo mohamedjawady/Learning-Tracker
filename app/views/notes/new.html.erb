@@ -1,0 +1,517 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">
+          <% if @note.is_folder? %>
+            <i class="fas fa-folder-plus mr-3 text-yellow-500"></i>
+            <%= @note.persisted? ? "Edit Folder" : "New Folder" %>
+          <% else %>
+            <i class="fas fa-sticky-note mr-3 text-blue-500"></i>
+            <%= @note.persisted? ? "Edit Note" : "New Note" %>
+          <% end %>
+        </h1>
+        <% if @note.notable %>
+          <p class="text-gray-600 mt-2">
+            For <%= @note.notable.class.name %>: <%= @note.notable.title %>
+          </p>
+        <% end %>
+      </div>
+      
+      <%= link_to "← Back to Notes", notes_path, 
+          class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" %>
+    </div>
+  </div>
+
+  <%= form_with model: @note, local: true, html: { class: "space-y-8" } do |form| %>
+    <% if @note.errors.any? %>
+      <div class="bg-red-50 border border-red-200 rounded-md p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <i class="fas fa-exclamation-triangle text-red-400"></i>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-red-800">
+              There were <%= pluralize(@note.errors.count, "error") %> with your submission:
+            </h3>
+            <div class="mt-2 text-sm text-red-700">
+              <ul class="list-disc pl-5 space-y-1">
+                <% @note.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="bg-white shadow-sm border border-gray-200 rounded-lg">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-medium text-gray-900">Basic Information</h2>
+      </div>
+      
+      <div class="p-6 space-y-6">
+        <!-- Title -->
+        <div>
+          <%= form.label :title, class: "block text-sm font-medium text-gray-700" %>
+          <%= form.text_field :title, 
+              class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+              placeholder: @note.is_folder? ? "Folder name..." : "Note title..." %>
+        </div>
+
+        <!-- Parent Folder -->
+        <div>
+          <%= form.label :parent_id, "Parent Folder (optional)", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.collection_select :parent_id, @parents, :id, :title, 
+              { prompt: "No parent (root level)" }, 
+              { class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" } %>
+        </div>
+
+        <!-- Tags -->
+        <div>
+          <%= form.label :tags, class: "block text-sm font-medium text-gray-700" %>
+          <%= form.text_field :tags, 
+              class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+              placeholder: "comma, separated, tags" %>
+          <p class="mt-1 text-sm text-gray-500">Separate tags with commas</p>
+        </div>
+
+        <!-- Color -->
+        <div>
+          <%= form.label :color, "Color Theme", class: "block text-sm font-medium text-gray-700" %>
+          <div class="mt-1 flex items-center space-x-3">
+            <%= form.color_field :color, 
+                class: "h-10 w-20 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" %>
+            <span class="text-sm text-gray-500">Choose a color to organize your notes</span>
+          </div>
+        </div>
+
+        <!-- Folder checkbox (if creating new) -->
+        <% unless @note.persisted? %>
+          <div class="flex items-center">
+            <%= form.check_box :is_folder, class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" %>
+            <%= form.label :is_folder, "This is a folder (for organizing other notes)", class: "ml-2 block text-sm text-gray-900" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Content Editor (only for notes, not folders) -->
+    <% unless @note.is_folder? %>
+      <div class="bg-white shadow-sm border border-gray-200 rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-medium text-gray-900">Content</h2>
+          <p class="text-sm text-gray-500 mt-1">Rich text editor with support for formatting, links, and images</p>
+        </div>
+        
+        <div class="p-6">
+          <!-- Enhanced Toolbar -->
+          <div class="mb-4 border border-gray-300 rounded-t-md bg-gray-50 p-3">
+            <div class="flex flex-wrap gap-1">
+              <!-- Text Formatting -->
+              <div class="flex gap-1 mr-4">
+                <button type="button" onclick="execCmd('bold')" class="toolbar-btn" title="Bold">
+                  <i class="fas fa-bold"></i>
+                </button>
+                <button type="button" onclick="execCmd('italic')" class="toolbar-btn" title="Italic">
+                  <i class="fas fa-italic"></i>
+                </button>
+                <button type="button" onclick="execCmd('underline')" class="toolbar-btn" title="Underline">
+                  <i class="fas fa-underline"></i>
+                </button>
+                <button type="button" onclick="execCmd('strikeThrough')" class="toolbar-btn" title="Strikethrough">
+                  <i class="fas fa-strikethrough"></i>
+                </button>
+              </div>
+              
+              <div class="border-l border-gray-400 mx-2"></div>
+              
+              <!-- Headings -->
+              <div class="flex gap-1 mr-4">
+                <select onchange="execCmd('formatBlock', this.value); this.selectedIndex=0;" class="toolbar-select">
+                  <option value="">Heading</option>
+                  <option value="<h1>">Heading 1</option>
+                  <option value="<h2>">Heading 2</option>
+                  <option value="<h3>">Heading 3</option>
+                  <option value="<h4>">Heading 4</option>
+                  <option value="<p>">Paragraph</option>
+                </select>
+              </div>
+              
+              <div class="border-l border-gray-400 mx-2"></div>
+              
+              <!-- Lists -->
+              <div class="flex gap-1 mr-4">
+                <button type="button" onclick="execCmd('insertUnorderedList')" class="toolbar-btn" title="Bullet List">
+                  <i class="fas fa-list-ul"></i>
+                </button>
+                <button type="button" onclick="execCmd('insertOrderedList')" class="toolbar-btn" title="Numbered List">
+                  <i class="fas fa-list-ol"></i>
+                </button>
+                <button type="button" onclick="execCmd('outdent')" class="toolbar-btn" title="Decrease Indent">
+                  <i class="fas fa-outdent"></i>
+                </button>
+                <button type="button" onclick="execCmd('indent')" class="toolbar-btn" title="Increase Indent">
+                  <i class="fas fa-indent"></i>
+                </button>
+              </div>
+              
+              <div class="border-l border-gray-400 mx-2"></div>
+              
+              <!-- Alignment -->
+              <div class="flex gap-1 mr-4">
+                <button type="button" onclick="execCmd('justifyLeft')" class="toolbar-btn" title="Align Left">
+                  <i class="fas fa-align-left"></i>
+                </button>
+                <button type="button" onclick="execCmd('justifyCenter')" class="toolbar-btn" title="Align Center">
+                  <i class="fas fa-align-center"></i>
+                </button>
+                <button type="button" onclick="execCmd('justifyRight')" class="toolbar-btn" title="Align Right">
+                  <i class="fas fa-align-right"></i>
+                </button>
+                <button type="button" onclick="execCmd('justifyFull')" class="toolbar-btn" title="Justify">
+                  <i class="fas fa-align-justify"></i>
+                </button>
+              </div>
+              
+              <div class="border-l border-gray-400 mx-2"></div>
+              
+              <!-- Links and Media -->
+              <div class="flex gap-1 mr-4">
+                <button type="button" onclick="insertLink()" class="toolbar-btn" title="Insert Link">
+                  <i class="fas fa-link"></i>
+                </button>
+                <button type="button" onclick="execCmd('unlink')" class="toolbar-btn" title="Remove Link">
+                  <i class="fas fa-unlink"></i>
+                </button>
+                <button type="button" onclick="insertImage()" class="toolbar-btn" title="Insert Image">
+                  <i class="fas fa-image"></i>
+                </button>
+              </div>
+              
+              <div class="border-l border-gray-400 mx-2"></div>
+              
+              <!-- Code and Special -->
+              <div class="flex gap-1 mr-4">
+                <button type="button" onclick="insertCode()" class="toolbar-btn" title="Inline Code">
+                  <i class="fas fa-code"></i>
+                </button>
+                <button type="button" onclick="insertCodeBlock()" class="toolbar-btn" title="Code Block">
+                  <i class="fas fa-terminal"></i>
+                </button>
+                <button type="button" onclick="insertTable()" class="toolbar-btn" title="Insert Table">
+                  <i class="fas fa-table"></i>
+                </button>
+                <button type="button" onclick="execCmd('insertHorizontalRule')" class="toolbar-btn" title="Horizontal Line">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+              
+              <div class="border-l border-gray-400 mx-2"></div>
+              
+              <!-- Text Color -->
+              <div class="flex gap-1">
+                <input type="color" onchange="execCmd('foreColor', this.value)" class="toolbar-color" title="Text Color" value="#000000">
+                <input type="color" onchange="execCmd('backColor', this.value)" class="toolbar-color" title="Background Color" value="#ffffff">
+              </div>
+            </div>
+          </div>
+          
+          <!-- Enhanced Editor -->
+          <div id="notes-editor" 
+               class="border border-gray-300 rounded-b-md bg-white prose max-w-none" 
+               contenteditable="true" 
+               style="min-height: 300px; padding: 20px; line-height: 1.6; font-size: 16px;"
+               onkeyup="updateContent()"
+               oninput="updateContent()"
+               onpaste="setTimeout(updateContent, 100)"
+               onclick="this.focus()"
+               placeholder="Start writing your note...">
+          </div>
+          
+          <!-- Hidden field for content -->
+          <%= form.hidden_field :content, data: { notes_editor_target: "content" } %>
+          
+          <p class="mt-2 text-sm text-gray-500">
+            <strong>Tip:</strong> You can paste images directly into the editor, or use the image button in the toolbar.
+          </p>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Enhanced WYSIWYG Editor Script -->
+    <style>
+      .toolbar-btn {
+        padding: 8px 12px;
+        border: 1px solid #d1d5db;
+        background: white;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: #374151;
+        font-size: 14px;
+        min-width: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .toolbar-btn:hover {
+        background: #f3f4f6;
+        border-color: #9ca3af;
+        transform: translateY(-1px);
+      }
+      
+      .toolbar-btn:active,
+      .toolbar-btn.active {
+        background: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
+      }
+      
+      .toolbar-select {
+        padding: 6px 8px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        background: white;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      
+      .toolbar-color {
+        width: 36px;
+        height: 36px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        cursor: pointer;
+        padding: 2px;
+      }
+      
+      #notes-editor:empty::before {
+        content: attr(placeholder);
+        color: #9ca3af;
+        font-style: italic;
+        pointer-events: none;
+      }
+      
+      #notes-editor:focus:empty::before {
+        content: '';
+      }
+      
+      #notes-editor pre {
+        background: #f3f4f6;
+        padding: 12px;
+        border-radius: 6px;
+        border: 1px solid #e5e7eb;
+        overflow-x: auto;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+      }
+      
+      #notes-editor code {
+        background: #f3f4f6;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+        color: #e11d48;
+      }
+      
+      #notes-editor table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 16px 0;
+      }
+      
+      #notes-editor table td,
+      #notes-editor table th {
+        border: 1px solid #d1d5db;
+        padding: 8px 12px;
+        text-align: left;
+      }
+      
+      #notes-editor table th {
+        background: #f9fafb;
+        font-weight: 600;
+      }
+      
+      #notes-editor blockquote {
+        border-left: 4px solid #3b82f6;
+        margin: 16px 0;
+        padding: 12px 16px;
+        background: #f8fafc;
+        font-style: italic;
+      }
+    </style>
+    
+    <script>
+      let editor, hiddenField;
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        editor = document.getElementById('notes-editor');
+        hiddenField = document.getElementById('note_content');
+        
+        // Load initial content
+        if (editor && hiddenField && hiddenField.value) {
+          editor.innerHTML = hiddenField.value;
+          console.log('Loaded initial content');
+        }
+        
+        // Handle keyboard shortcuts
+        editor.addEventListener('keydown', function(e) {
+          if (e.ctrlKey || e.metaKey) {
+            switch(e.key) {
+              case 'b':
+                e.preventDefault();
+                execCmd('bold');
+                break;
+              case 'i':
+                e.preventDefault();
+                execCmd('italic');
+                break;
+              case 'u':
+                e.preventDefault();
+                execCmd('underline');
+                break;
+              case 'k':
+                e.preventDefault();
+                insertLink();
+                break;
+            }
+          }
+        });
+        
+        // Handle paste for images
+        editor.addEventListener('paste', function(e) {
+          const items = e.clipboardData.items;
+          for (let item of items) {
+            if (item.type.indexOf('image') !== -1) {
+              e.preventDefault();
+              const file = item.getAsFile();
+              insertImageFromFile(file);
+              break;
+            }
+          }
+          setTimeout(updateContent, 100);
+        });
+        
+        console.log('Enhanced WYSIWYG editor initialized!');
+      });
+      
+      function execCmd(command, value = null) {
+        editor.focus();
+        document.execCommand(command, false, value);
+        updateContent();
+        updateToolbarState();
+      }
+      
+      function updateContent() {
+        if (hiddenField && editor) {
+          hiddenField.value = editor.innerHTML;
+        }
+      }
+      
+      function updateToolbarState() {
+        // Update active state of toolbar buttons
+        const buttons = document.querySelectorAll('.toolbar-btn');
+        buttons.forEach(btn => {
+          btn.classList.remove('active');
+        });
+        
+        if (document.queryCommandState('bold')) {
+          document.querySelector('[onclick="execCmd(\'bold\')"]').classList.add('active');
+        }
+        if (document.queryCommandState('italic')) {
+          document.querySelector('[onclick="execCmd(\'italic\')"]').classList.add('active');
+        }
+        if (document.queryCommandState('underline')) {
+          document.querySelector('[onclick="execCmd(\'underline\')"]').classList.add('active');
+        }
+      }
+      
+      function insertLink() {
+        const url = prompt('Enter URL:');
+        if (url) {
+          if (window.getSelection().toString()) {
+            execCmd('createLink', url);
+          } else {
+            const text = prompt('Enter link text:') || url;
+            editor.focus();
+            document.execCommand('insertHTML', false, `<a href="${url}" target="_blank">${text}</a>`);
+            updateContent();
+          }
+        }
+      }
+      
+      function insertImage() {
+        const url = prompt('Enter image URL:');
+        if (url) {
+          editor.focus();
+          document.execCommand('insertHTML', false, `<img src="${url}" style="max-width: 100%; height: auto; margin: 8px 0;" alt="Image">`);
+          updateContent();
+        }
+      }
+      
+      function insertImageFromFile(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          editor.focus();
+          document.execCommand('insertHTML', false, `<img src="${e.target.result}" style="max-width: 100%; height: auto; margin: 8px 0;" alt="Pasted Image">`);
+          updateContent();
+        };
+        reader.readAsDataURL(file);
+      }
+      
+      function insertCode() {
+        const selection = window.getSelection();
+        if (selection.toString()) {
+          document.execCommand('insertHTML', false, `<code>${selection.toString()}</code>`);
+        } else {
+          const code = prompt('Enter code:');
+          if (code) {
+            document.execCommand('insertHTML', false, `<code>${code}</code>`);
+          }
+        }
+        updateContent();
+      }
+      
+      function insertCodeBlock() {
+        const code = prompt('Enter code block:');
+        if (code) {
+          document.execCommand('insertHTML', false, `<pre><code>${code}</code></pre><p><br></p>`);
+          updateContent();
+        }
+      }
+      
+      function insertTable() {
+        const rows = prompt('Number of rows:', '3');
+        const cols = prompt('Number of columns:', '3');
+        if (rows && cols) {
+          let tableHTML = '<table>';
+          for (let i = 0; i < rows; i++) {
+            tableHTML += '<tr>';
+            for (let j = 0; j < cols; j++) {
+              tableHTML += i === 0 ? '<th>Header</th>' : '<td>Cell</td>';
+            }
+            tableHTML += '</tr>';
+          }
+          tableHTML += '</table><p><br></p>';
+          document.execCommand('insertHTML', false, tableHTML);
+          updateContent();
+        }
+      }
+      
+      // Update toolbar state on selection change
+      document.addEventListener('selectionchange', updateToolbarState);
+    </script>
+
+    <!-- Submit Button -->
+    <div class="flex justify-end space-x-3">
+      <%= link_to "Cancel", notes_path, 
+          class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" %>
+      <%= form.submit @note.persisted? ? "Update #{@note.is_folder? ? 'Folder' : 'Note'}" : "Create #{@note.is_folder? ? 'Folder' : 'Note'}", 
+          class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700" %>
+    </div>
+  <% end %>
+</div>

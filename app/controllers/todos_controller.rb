@@ -42,7 +42,8 @@ class TodosController < ApplicationController
 
   def toggle_complete
     @todo.toggle_complete!
-    redirect_to todos_path, notice: "Todo #{@todo.completed? ? 'completed' : 'reopened'}."
+    status_message = @todo.completed? ? "✅ Todo '#{@todo.title}' completed! Well done!" : "📝 Todo '#{@todo.title}' reopened."
+    redirect_to todos_path, notice: status_message
   end
 
   private

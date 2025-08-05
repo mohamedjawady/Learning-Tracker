@@ -26,7 +26,7 @@ class BooksController < ApplicationController
     @book = Book.new(book_params)
 
     if @book.save
-      redirect_to @book, notice: 'Book was successfully created.'
+      redirect_to @book, notice: "📚 Book '#{@book.title}' was successfully created!"
     else
       render :new, status: :unprocessable_entity
     end
@@ -37,23 +37,29 @@ class BooksController < ApplicationController
 
   def update
     if @book.update(book_params)
-      redirect_to @book, notice: 'Book was successfully updated.'
+      redirect_to @book, notice: "✏️ Book '#{@book.title}' was successfully updated!"
     else
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
+    title = @book.title
     @book.destroy
-    redirect_to books_url, notice: 'Book was successfully deleted.'
+    redirect_to books_url, notice: "🗑️ Book '#{title}' was successfully deleted!"
   end
 
   def update_progress
     if params[:current_page].present?
       @book.update(current_page: params[:current_page])
+      @book.update_status_based_on_progress
     end
     
-    render json: { success: true, progress: @book.progress_percentage }
+    render json: { 
+      success: true, 
+      progress: @book.progress_percentage,
+      message: "📈 Progress updated to page #{@book.current_page}!"
+    }
   end
 
   def viewer

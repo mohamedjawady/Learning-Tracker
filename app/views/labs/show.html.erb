@@ -1,0 +1,99 @@
+<div class="max-w-4xl mx-auto py-8 px-4">
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">🧪 <%= @lab.title %></h1>
+      <div class="flex items-center gap-4 text-sm text-gray-600">
+        <span>Lab <%= @lab.order_number %></span>
+        <% if @lab.completed? %>
+          <span class="text-green-600 font-medium flex items-center gap-1">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            Completed <%= time_ago_in_words(@lab.completed_at) %> ago
+          </span>
+        <% else %>
+          <span class="text-orange-600 font-medium">Pending</span>
+        <% end %>
+      </div>
+    </div>
+
+    <% if @lab.description.present? %>
+      <div class="mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Description</h2>
+        <div class="prose max-w-none text-gray-700">
+          <%= simple_format(@lab.description) %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if @lab.notes.present? %>
+      <div class="mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Lab Notes</h2>
+        <div class="bg-gray-50 rounded-lg p-6">
+          <div class="prose max-w-none text-gray-700">
+            <%= simple_format(@lab.notes) %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Lab completion form for non-completed labs -->
+    <% unless @lab.completed? %>
+      <div class="mb-8 p-6 bg-purple-50 rounded-lg">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Complete this Lab</h3>
+        <%= form_with model: @lab, url: lab_path(@lab), method: :patch, local: true, class: "space-y-4" do |form| %>
+          <div>
+            <%= form.label :notes, "Lab Notes (optional)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_area :notes, rows: 4,
+                class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent",
+                placeholder: "Add notes about what you learned, challenges faced, or key takeaways..." %>
+          </div>
+          <div class="flex items-center gap-4">
+            <%= form.check_box :completed, class: "w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2" %>
+            <%= form.label :completed, "Mark as completed", class: "text-sm font-medium text-gray-700" %>
+            <%= form.submit "Update Lab", 
+                class: "bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="flex items-center justify-between pt-8 border-t border-gray-200">
+      <div class="flex items-center gap-4">
+        <%= link_to "← Back to #{@lab.course.title}", course_path(@lab.course), 
+            class: "text-purple-600 hover:text-purple-700 font-medium" %>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <% unless @lab.completed? %>
+          <%= link_to complete_lab_path(@lab), method: :patch,
+              class: "bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors",
+              data: { confirm: "Mark this lab as complete?" } do %>
+            ✓ Mark Complete
+          <% end %>
+        <% end %>
+        
+        <%= link_to edit_lab_path(@lab), 
+            class: "bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors" do %>
+          ✏️ Edit Lab
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Course -->
+  <div class="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Part of Course</h3>
+    <div class="flex items-center gap-4">
+      <div class="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center">
+        <span class="text-2xl">🎓</span>
+      </div>
+      <div>
+        <h4 class="font-medium text-gray-900"><%= @lab.course.title %></h4>
+        <p class="text-gray-600 text-sm"><%= @lab.course.instructor %></p>
+        <%= link_to "View Course", course_path(@lab.course), 
+            class: "text-purple-600 hover:text-purple-700 text-sm font-medium" %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+<div class="max-w-4xl mx-auto py-8 px-4">
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">📖 <%= @chapter.title %></h1>
+      <div class="flex items-center gap-4 text-sm text-gray-600">
+        <span>Chapter <%= @chapter.order_number %></span>
+        <% if @chapter.page_start.present? && @chapter.page_end.present? %>
+          <span>Pages <%= @chapter.page_start %>-<%= @chapter.page_end %></span>
+        <% end %>
+        <% if @chapter.completed? %>
+          <span class="text-green-600 font-medium flex items-center gap-1">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            Completed <%= time_ago_in_words(@chapter.completed_at) %> ago
+          </span>
+        <% else %>
+          <span class="text-orange-600 font-medium">In Progress</span>
+        <% end %>
+      </div>
+    </div>
+
+    <% if @chapter.description.present? %>
+      <div class="mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Description</h2>
+        <div class="prose max-w-none text-gray-700">
+          <%= simple_format(@chapter.description) %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="flex items-center justify-between pt-8 border-t border-gray-200">
+      <div class="flex items-center gap-4">
+        <%= link_to "← Back to #{@chapter.course&.title || @chapter.book&.title}", 
+            @chapter.course ? course_path(@chapter.course) : book_path(@chapter.book), 
+            class: "text-blue-600 hover:text-blue-700 font-medium" %>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <% unless @chapter.completed? %>
+          <%= link_to complete_chapter_path(@chapter), method: :patch,
+              class: "bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors",
+              data: { confirm: "Mark this chapter as complete?" } do %>
+            ✓ Mark Complete
+          <% end %>
+        <% end %>
+        
+        <%= link_to edit_chapter_path(@chapter), 
+            class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors" do %>
+          ✏️ Edit Chapter
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Content -->
+  <% if @chapter.course.present? %>
+    <div class="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Part of Course</h3>
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center">
+          <span class="text-2xl">🎓</span>
+        </div>
+        <div>
+          <h4 class="font-medium text-gray-900"><%= @chapter.course.title %></h4>
+          <p class="text-gray-600 text-sm"><%= @chapter.course.instructor %></p>
+          <%= link_to "View Course", course_path(@chapter.course), 
+              class: "text-blue-600 hover:text-blue-700 text-sm font-medium" %>
+        </div>
+      </div>
+    </div>
+  <% elsif @chapter.book.present? %>
+    <div class="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Part of Book</h3>
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center">
+          <span class="text-2xl">📚</span>
+        </div>
+        <div>
+          <h4 class="font-medium text-gray-900"><%= @chapter.book.title %></h4>
+          <p class="text-gray-600 text-sm"><%= @chapter.book.author %></p>
+          <%= link_to "View Book", book_path(@chapter.book), 
+              class: "text-blue-600 hover:text-blue-700 text-sm font-medium" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

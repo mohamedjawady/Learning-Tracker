@@ -1,0 +1,81 @@
+<div class="max-w-2xl mx-auto py-8 px-4">
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">✏️ Edit Chapter</h1>
+      <p class="text-gray-600">Update chapter details</p>
+    </div>
+
+    <%= form_with model: @chapter, local: true, class: "space-y-6" do |form| %>
+      <% if @chapter.errors.any? %>
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div class="flex items-center mb-2">
+            <svg class="w-5 h-5 text-red-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+            </svg>
+            <h3 class="text-sm font-medium text-red-800">Please fix the following errors:</h3>
+          </div>
+          <ul class="text-sm text-red-700 list-disc list-inside">
+            <% @chapter.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= form.label :title, class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.text_field :title, 
+            class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+            placeholder: "Enter chapter title..." %>
+      </div>
+
+      <div>
+        <%= form.label :description, class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.text_area :description, rows: 4,
+            class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+            placeholder: "Chapter description or summary..." %>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <%= form.label :order_number, "Chapter Number", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.number_field :order_number, 
+              class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+              placeholder: "1" %>
+        </div>
+
+        <div>
+          <%= form.label :page_start, "Start Page", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.number_field :page_start, 
+              class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+              placeholder: "1" %>
+        </div>
+
+        <div>
+          <%= form.label :page_end, "End Page", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.number_field :page_end, 
+              class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+              placeholder: "25" %>
+        </div>
+      </div>
+
+      <div class="flex items-center">
+        <%= form.check_box :completed, class: "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" %>
+        <%= form.label :completed, "Mark as completed", class: "ml-2 text-sm font-medium text-gray-700" %>
+      </div>
+
+      <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+        <%= link_to "Cancel", chapter_path(@chapter), 
+            class: "text-gray-600 hover:text-gray-700 font-medium" %>
+        
+        <div class="flex items-center gap-3">
+          <%= link_to "Delete Chapter", chapter_path(@chapter), method: :delete,
+              class: "text-red-600 hover:text-red-700 font-medium",
+              data: { confirm: "Are you sure you want to delete this chapter?" } %>
+          <%= form.submit "Update Chapter", 
+              class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,5 +1,6 @@
 class Article < ApplicationRecord
   has_many :calendar_events, as: :eventable, dependent: :destroy
+  has_many :notes, as: :notable, dependent: :destroy
 
   validates :title, presence: true
   validates :url, presence: true

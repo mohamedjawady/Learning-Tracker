@@ -194,6 +194,11 @@
         class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" %>
     
     <div class="space-x-3">
+      <%= link_to "Course Notes", notes_path(notable_type: 'Course', notable_id: @course.id), 
+          class: "inline-flex items-center px-4 py-2 border border-indigo-300 text-sm font-medium rounded-md text-indigo-700 bg-white hover:bg-indigo-50" do %>
+        <i class="fas fa-sticky-note mr-2"></i>
+        Notes (<%= @course.notes.count %>)
+      <% end %>
       <%= link_to "Edit Course", edit_course_path(@course), 
           class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" %>
       <%= link_to "Delete Course", course_path(@course), method: :delete, 

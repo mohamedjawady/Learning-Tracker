@@ -26,7 +26,7 @@ class CoursesController < ApplicationController
     @course = Course.new(course_params)
 
     if @course.save
-      redirect_to @course, notice: 'Course was successfully created.'
+      redirect_to @course, notice: "🎓 Course '#{@course.title}' was successfully created!"
     else
       render :new, status: :unprocessable_entity
     end
@@ -37,15 +37,16 @@ class CoursesController < ApplicationController
 
   def update
     if @course.update(course_params)
-      redirect_to @course, notice: 'Course was successfully updated.'
+      redirect_to @course, notice: "✏️ Course '#{@course.title}' was successfully updated!"
     else
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
+    title = @course.title
     @course.destroy
-    redirect_to courses_url, notice: 'Course was successfully deleted.'
+    redirect_to courses_url, notice: "🗑️ Course '#{title}' was successfully deleted!"
   end
 
   def update_progress

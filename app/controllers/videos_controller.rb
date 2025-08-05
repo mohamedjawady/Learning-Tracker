@@ -17,7 +17,7 @@ class VideosController < ApplicationController
     @video = @course.videos.build(video_params)
     
     if @video.save
-      redirect_to course_path(@course), notice: 'Video was successfully created.'
+      redirect_to course_path(@course), notice: "🎬 Video '#{@video.title}' was successfully created!"
     else
       render :new
     end
@@ -28,7 +28,7 @@ class VideosController < ApplicationController
 
   def update
     if @video.update(video_params)
-      redirect_to course_path(@video.course), notice: 'Video was successfully updated.'
+      redirect_to course_path(@video.course), notice: "✏️ Video '#{@video.title}' was successfully updated!"
     else
       render :edit
     end
@@ -36,7 +36,7 @@ class VideosController < ApplicationController
 
   def destroy
     @video.destroy
-    redirect_to course_path(@video.course), notice: 'Video was successfully deleted.'
+    redirect_to course_path(@video.course), notice: "🗑️ Video '#{@video.title}' was successfully deleted!"
   end
 
   def complete
@@ -45,7 +45,7 @@ class VideosController < ApplicationController
       completed_at: Time.current,
       watched_minutes: @video.duration_minutes
     )
-    redirect_back(fallback_location: root_path, notice: 'Video marked as complete!')
+    redirect_back(fallback_location: root_path, notice: "🎬 Video '#{@video.title}' completed! Keep up the great work!")
   end
 
   private

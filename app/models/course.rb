@@ -3,6 +3,7 @@ class Course < ApplicationRecord
   has_many :videos, dependent: :destroy
   has_many :labs, dependent: :destroy
   has_many :calendar_events, as: :eventable, dependent: :destroy
+  has_many :notes, as: :notable, dependent: :destroy
 
   validates :title, presence: true
   validates :status, inclusion: { in: %w[not_started in_progress completed paused] }

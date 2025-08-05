@@ -17,7 +17,7 @@ class ChaptersController < ApplicationController
     @chapter = @course.chapters.build(chapter_params)
     
     if @chapter.save
-      redirect_to course_path(@course), notice: 'Chapter was successfully created.'
+      redirect_to course_path(@course), notice: "📖 Chapter '#{@chapter.title}' was successfully created!"
     else
       render :new
     end
@@ -28,7 +28,7 @@ class ChaptersController < ApplicationController
 
   def update
     if @chapter.update(chapter_params)
-      redirect_to course_path(@chapter.course || @chapter.book), notice: 'Chapter was successfully updated.'
+      redirect_to course_path(@chapter.course || @chapter.book), notice: "✏️ Chapter '#{@chapter.title}' was successfully updated!"
     else
       render :edit
     end
@@ -36,12 +36,12 @@ class ChaptersController < ApplicationController
 
   def destroy
     @chapter.destroy
-    redirect_to course_path(@chapter.course || @chapter.book), notice: 'Chapter was successfully deleted.'
+    redirect_to course_path(@chapter.course || @chapter.book), notice: "🗑️ Chapter '#{@chapter.title}' was successfully deleted!"
   end
 
   def complete
     @chapter.update(completed: true, completed_at: Time.current)
-    redirect_back(fallback_location: root_path, notice: 'Chapter marked as complete!')
+    redirect_back(fallback_location: root_path, notice: "🎉 Chapter '#{@chapter.title}' marked as complete! Great progress!")
   end
 
   private
