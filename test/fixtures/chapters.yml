@@ -1,0 +1,36 @@
+# Chapters for testing
+rails_intro:
+  title: "Introduction to Rails"
+  description: "Getting started with Rails framework"
+  order_number: 1
+  completed: true
+  completed_at: <%= 2.weeks.ago %>
+  course: rails_course
+  book: 
+
+rails_models:
+  title: "Models and ActiveRecord"
+  description: "Database models and ORM concepts"
+  order_number: 2
+  completed: true
+  completed_at: <%= 1.week.ago %>
+  course: rails_course
+  book: 
+
+rails_controllers:
+  title: "Controllers and Routing"
+  description: "Handling requests and responses"
+  order_number: 3
+  completed: false
+  course: rails_course
+  book: 
+
+book_chapter:
+  title: "Clean Code Principles"
+  description: "Introduction to clean coding practices"
+  order_number: 1
+  completed: false
+  page_start: 1
+  page_end: 50
+  course: 
+  book: clean_code

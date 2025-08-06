@@ -1,0 +1,28 @@
+# Videos for testing
+rails_installation:
+  title: "Rails Installation"
+  description: "Setting up Rails development environment"
+  order_number: 1
+  duration_minutes: 15
+  watched_minutes: 15
+  completed: true
+  completed_at: <%= 2.weeks.ago %>
+  course: rails_course
+
+first_rails_app:
+  title: "First Rails App"
+  description: "Creating your first Rails application"
+  order_number: 2
+  duration_minutes: 30
+  watched_minutes: 20
+  completed: false
+  course: rails_course
+
+mvc_pattern:
+  title: "Understanding MVC"
+  description: "Model-View-Controller architecture"
+  order_number: 3
+  duration_minutes: 25
+  watched_minutes: 0
+  completed: false
+  course: rails_course

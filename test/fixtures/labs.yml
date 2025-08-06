@@ -1,0 +1,23 @@
+# Labs for testing
+completed_lab:
+  title: "User Registration Lab"
+  description: "Build a user registration system with validation"
+  order_number: 1
+  completed: true
+  completed_at: <%= 1.week.ago %>
+  notes: "Completed successfully. Added extra CSS styling."
+  course: rails_course
+
+pending_lab:
+  title: "User Authentication Lab"
+  description: "Implement user login and registration"
+  order_number: 2
+  completed: false
+  course: rails_course
+
+api_lab:
+  title: "Build REST API"
+  description: "Create a RESTful API with JSON responses"
+  order_number: 3
+  completed: false
+  course: rails_course

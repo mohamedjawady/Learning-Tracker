@@ -1,0 +1,27 @@
+# Courses for testing
+rails_course:
+  title: "Ruby on Rails Mastery"
+  description: "Complete guide to building web applications with Ruby on Rails"
+  instructor: "John Smith"
+  platform: "Udemy"
+  status: "in_progress"
+  total_duration_hours: 40
+  difficulty_level: "Intermediate"
+
+javascript_course:
+  title: "JavaScript ES6+ Fundamentals"
+  description: "Modern JavaScript concepts and best practices"
+  instructor: "Jane Doe"
+  platform: "Coursera"
+  status: "not_started"
+  total_duration_hours: 25
+  difficulty_level: "Beginner"
+
+completed_course:
+  title: "HTML & CSS Basics"
+  description: "Learn the fundamentals of web design"
+  instructor: "Web Expert"
+  platform: "FreeCodeCamp"
+  status: "completed"
+  total_duration_hours: 15
+  difficulty_level: "Beginner"

@@ -1,0 +1,30 @@
+# Calendar events for testing
+study_session:
+  title: "Rails Study Session"
+  description: "Continue with Controllers chapter"
+  start_date: <%= 2.days.from_now.change(hour: 10, min: 0) %>
+  end_date: <%= 2.days.from_now.change(hour: 12, min: 0) %>
+  event_type: "study_session"
+  all_day: false
+  eventable_type: "Course"
+  eventable_id: 1
+
+deadline_event:
+  title: "Assignment Deadline"
+  description: "Submit User Authentication lab"
+  start_date: <%= 5.days.from_now.change(hour: 23, min: 59) %>
+  end_date: <%= 5.days.from_now.change(hour: 23, min: 59) %>
+  event_type: "deadline"
+  all_day: false
+  eventable_type: "Course"
+  eventable_id: 1
+
+reading_session:
+  title: "Clean Code Reading"
+  description: "Read Comments chapter"
+  start_date: <%= 3.days.from_now.change(hour: 14, min: 0) %>
+  end_date: <%= 3.days.from_now.change(hour: 15, min: 30) %>
+  event_type: "study_session"
+  all_day: false
+  eventable_type: "Book"
+  eventable_id: 1

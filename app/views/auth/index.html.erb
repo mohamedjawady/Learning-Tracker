@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Learning Tracker - Sign In</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Custom styles for animations -->
+    <style>
+      /* Ensure proper viewport handling */
+      html, body {
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* 3D Cube Animations */
+      @keyframes rotateX {
+        0% { transform: rotateX(0deg) rotateY(0deg); }
+        25% { transform: rotateX(90deg) rotateY(45deg); }
+        50% { transform: rotateX(180deg) rotateY(90deg); }
+        75% { transform: rotateX(270deg) rotateY(135deg); }
+        100% { transform: rotateX(360deg) rotateY(180deg); }
+      }
+
+      @keyframes floatUpDown {
+        0%, 100% { transform: translateY(0px) translateX(0px); }
+        25% { transform: translateY(-30px) translateX(10px); }
+        50% { transform: translateY(0px) translateX(20px); }
+        75% { transform: translateY(30px) translateX(10px); }
+      }
+
+      @keyframes rotateSphere {
+        0% { transform: translateY(0px) scale(1); }
+        50% { transform: translateY(-40px) scale(1.1); }
+        100% { transform: translateY(0px) scale(1); }
+      }
+
+      @keyframes pyramidSpin {
+        0% { transform: rotateX(0deg) rotateY(0deg) translateZ(0px); }
+        50% { transform: rotateX(180deg) rotateY(180deg) translateZ(20px); }
+        100% { transform: rotateX(360deg) rotateY(360deg) translateZ(0px); }
+      }
+
+      @keyframes particleFloat {
+        0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.3; }
+        25% { transform: translateY(-100px) translateX(30px); opacity: 1; }
+        50% { transform: translateY(-200px) translateX(-20px); opacity: 0.7; }
+        75% { transform: translateY(-300px) translateX(40px); opacity: 0.4; }
+      }
+
+      /* 3D Cube Structure */
+      .cube-3d {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        animation: rotateX 8s infinite linear;
+      }
+
+      .cube-face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+      }
+
+      .cube-front { transform: rotateY(0deg) translateZ(50px); }
+      .cube-back { transform: rotateY(180deg) translateZ(50px); }
+      .cube-right { transform: rotateY(90deg) translateZ(50px); }
+      .cube-left { transform: rotateY(-90deg) translateZ(50px); }
+      .cube-top { transform: rotateX(90deg) translateZ(50px); }
+      .cube-bottom { transform: rotateX(-90deg) translateZ(50px); }
+
+      /* Different sizes for different cubes */
+      .floating-cube-1 .cube-front { transform: rotateY(0deg) translateZ(80px); }
+      .floating-cube-1 .cube-back { transform: rotateY(180deg) translateZ(80px); }
+      .floating-cube-1 .cube-right { transform: rotateY(90deg) translateZ(80px); }
+      .floating-cube-1 .cube-left { transform: rotateY(-90deg) translateZ(80px); }
+      .floating-cube-1 .cube-top { transform: rotateX(90deg) translateZ(80px); }
+      .floating-cube-1 .cube-bottom { transform: rotateX(-90deg) translateZ(80px); }
+
+      .floating-cube-2 .cube-front { transform: rotateY(0deg) translateZ(48px); }
+      .floating-cube-2 .cube-back { transform: rotateY(180deg) translateZ(48px); }
+      .floating-cube-2 .cube-right { transform: rotateY(90deg) translateZ(48px); }
+      .floating-cube-2 .cube-left { transform: rotateY(-90deg) translateZ(48px); }
+      .floating-cube-2 .cube-top { transform: rotateX(90deg) translateZ(48px); }
+      .floating-cube-2 .cube-bottom { transform: rotateX(-90deg) translateZ(48px); }
+
+      .floating-cube-3 .cube-front { transform: rotateY(0deg) translateZ(40px); }
+      .floating-cube-3 .cube-back { transform: rotateY(180deg) translateZ(40px); }
+      .floating-cube-3 .cube-right { transform: rotateY(90deg) translateZ(40px); }
+      .floating-cube-3 .cube-left { transform: rotateY(-90deg) translateZ(40px); }
+      .floating-cube-3 .cube-top { transform: rotateX(90deg) translateZ(40px); }
+      .floating-cube-3 .cube-bottom { transform: rotateX(-90deg) translateZ(40px); }
+
+      /* Floating Animations */
+      .floating-cube-1 {
+        animation: floatUpDown 6s ease-in-out infinite;
+        perspective: 1000px;
+      }
+
+      .floating-cube-2 {
+        animation: floatUpDown 8s ease-in-out infinite reverse;
+        perspective: 1000px;
+        animation-delay: -2s;
+      }
+
+      .floating-sphere-1 {
+        animation: rotateSphere 4s ease-in-out infinite;
+        animation-delay: -1s;
+      }
+
+      .floating-sphere-2 {
+        animation: rotateSphere 5s ease-in-out infinite;
+        animation-delay: -3s;
+      }
+
+      .floating-sphere-4 {
+        animation: rotateSphere 7s ease-in-out infinite;
+        animation-delay: -2.5s;
+      }
+
+      .floating-cube-3 {
+        animation: floatUpDown 9s ease-in-out infinite;
+        perspective: 1000px;
+        animation-delay: -5s;
+      }
+
+      /* Particle Animations */
+      .particle-1 { animation: particleFloat 15s infinite ease-in-out; animation-delay: 0s; }
+      .particle-2 { animation: particleFloat 18s infinite ease-in-out; animation-delay: -3s; }
+      .particle-3 { animation: particleFloat 12s infinite ease-in-out; animation-delay: -6s; }
+      .particle-4 { animation: particleFloat 20s infinite ease-in-out; animation-delay: -9s; }
+      .particle-5 { animation: particleFloat 16s infinite ease-in-out; animation-delay: -12s; }
+      .particle-6 { animation: particleFloat 14s infinite ease-in-out; animation-delay: -2s; }
+      .particle-7 { animation: particleFloat 22s infinite ease-in-out; animation-delay: -8s; }
+      .particle-8 { animation: particleFloat 19s infinite ease-in-out; animation-delay: -15s; }
+      .pyramid-3d {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        animation: pyramidSpin 10s infinite linear;
+      }
+
+      .pyramid-face {
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-left: 56px solid transparent;
+        border-right: 56px solid transparent;
+        transform-origin: center bottom;
+      }
+
+      .pyramid-front {
+        border-bottom: 84px solid;
+        transform: rotateY(0deg) translateZ(39px);
+      }
+
+      .pyramid-right {
+        border-bottom: 84px solid;
+        transform: rotateY(90deg) translateZ(39px);
+      }
+
+      .pyramid-back {
+        border-bottom: 84px solid;
+        transform: rotateY(180deg) translateZ(39px);
+      }
+
+      .pyramid-left {
+        border-bottom: 84px solid;
+        transform: rotateY(-90deg) translateZ(39px);
+      }
+
+      .floating-pyramid-1 {
+        animation: floatUpDown 7s ease-in-out infinite;
+        perspective: 1000px;
+        animation-delay: -4s;
+      }
+
+      /* Particle Animations */
+      .particle-1 { animation: particleFloat 15s infinite ease-in-out; animation-delay: 0s; }
+      .particle-2 { animation: particleFloat 18s infinite ease-in-out; animation-delay: -3s; }
+      .particle-3 { animation: particleFloat 12s infinite ease-in-out; animation-delay: -6s; }
+      .particle-4 { animation: particleFloat 20s infinite ease-in-out; animation-delay: -9s; }
+
+      /* 3D Sphere effects */
+      .sphere-3d {
+        box-shadow: 
+          inset -20px -20px 50px rgba(0, 0, 0, 0.3),
+          inset 20px 20px 50px rgba(255, 255, 255, 0.2),
+          0 25px 50px rgba(0, 0, 0, 0.3);
+        position: relative;
+      }
+
+      .sphere-3d::before {
+        content: '';
+        position: absolute;
+        top: 10%;
+        left: 15%;
+        width: 30%;
+        height: 30%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+        border-radius: 50%;
+        filter: blur(2px);
+      }
+
+      /* Tab functionality */
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .gradient-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      /* Parallax layers */
+      .parallax-layer-1 {
+        animation: floatUpDown 20s ease-in-out infinite;
+      }
+    </style>
+  </head>
+
+  <body class="h-screen w-screen overflow-hidden">
+    <!-- Flash Messages -->
+    <% if notice %>
+      <div class="fixed top-4 right-4 z-50 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded shadow-lg" role="alert">
+        <span class="block sm:inline"><%= notice %></span>
+      </div>
+    <% end %>
+
+    <% if alert %>
+      <div class="fixed top-4 right-4 z-50 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded shadow-lg" role="alert">
+        <span class="block sm:inline"><%= alert %></span>
+      </div>
+    <% end %>
+
+    <!-- Full Screen 3D Background Animation -->
+    <div class="absolute inset-0 w-full h-full bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600">
+      <!-- 3D Floating Shapes -->
+      <div class="absolute inset-0">
+        <!-- Large floating cube -->
+        <div class="floating-cube-1 absolute w-24 sm:w-32 md:w-40 h-24 sm:h-32 md:h-40 transform-gpu top-1/4 left-1/6">
+          <div class="cube-3d">
+            <div class="cube-face cube-front bg-gradient-to-br from-blue-400 to-blue-600 opacity-60 sm:opacity-70"></div>
+            <div class="cube-face cube-back bg-gradient-to-br from-purple-400 to-purple-600 opacity-60 sm:opacity-70"></div>
+            <div class="cube-face cube-right bg-gradient-to-br from-pink-400 to-pink-600 opacity-60 sm:opacity-70"></div>
+            <div class="cube-face cube-left bg-gradient-to-br from-indigo-400 to-indigo-600 opacity-60 sm:opacity-70"></div>
+            <div class="cube-face cube-top bg-gradient-to-br from-cyan-400 to-cyan-600 opacity-60 sm:opacity-70"></div>
+            <div class="cube-face cube-bottom bg-gradient-to-br from-violet-400 to-violet-600 opacity-60 sm:opacity-70"></div>
+          </div>
+        </div>
+
+        <!-- Medium floating sphere -->
+        <div class="floating-sphere-1 absolute w-20 sm:w-24 md:w-32 h-20 sm:h-24 md:h-32 top-1/6 right-1/4">
+          <div class="sphere-3d w-full h-full bg-gradient-to-br from-emerald-400 to-teal-600 rounded-full shadow-2xl opacity-70 sm:opacity-80"></div>
+        </div>
+
+        <!-- Large floating pyramid -->
+        <div class="floating-pyramid-1 absolute w-16 sm:w-20 md:w-28 h-16 sm:h-20 md:h-28 bottom-1/4 left-1/4">
+          <div class="pyramid-3d">
+            <div class="pyramid-face pyramid-front bg-gradient-to-b from-orange-400 to-red-600 opacity-65 sm:opacity-75"></div>
+            <div class="pyramid-face pyramid-right bg-gradient-to-b from-yellow-400 to-orange-600 opacity-65 sm:opacity-75"></div>
+            <div class="pyramid-face pyramid-back bg-gradient-to-b from-red-400 to-pink-600 opacity-65 sm:opacity-75"></div>
+            <div class="pyramid-face pyramid-left bg-gradient-to-b from-pink-400 to-purple-600 opacity-65 sm:opacity-75"></div>
+          </div>
+        </div>
+
+        <!-- Additional floating elements -->
+        <div class="floating-cube-2 absolute w-16 sm:w-20 md:w-24 h-16 sm:h-20 md:h-24 transform-gpu top-2/3 right-1/5">
+          <div class="cube-3d">
+            <div class="cube-face cube-front bg-gradient-to-br from-lime-400 to-green-600 opacity-50 sm:opacity-60"></div>
+            <div class="cube-face cube-back bg-gradient-to-br from-green-400 to-emerald-600 opacity-50 sm:opacity-60"></div>
+            <div class="cube-face cube-right bg-gradient-to-br from-emerald-400 to-teal-600 opacity-50 sm:opacity-60"></div>
+            <div class="cube-face cube-left bg-gradient-to-br from-teal-400 to-cyan-600 opacity-50 sm:opacity-60"></div>
+            <div class="cube-face cube-top bg-gradient-to-br from-cyan-400 to-blue-600 opacity-50 sm:opacity-60"></div>
+            <div class="cube-face cube-bottom bg-gradient-to-br from-blue-400 to-indigo-600 opacity-50 sm:opacity-60"></div>
+          </div>
+        </div>
+
+        <div class="floating-sphere-2 absolute w-12 sm:w-16 md:w-20 h-12 sm:h-16 md:h-20 top-1/3 left-3/4">
+          <div class="sphere-3d w-full h-full bg-gradient-to-br from-rose-400 to-pink-600 rounded-full shadow-xl opacity-60 sm:opacity-70"></div>
+        </div>
+
+        <div class="floating-sphere-3 absolute w-10 sm:w-12 md:w-16 h-10 sm:h-12 md:h-16 bottom-1/5 right-1/3">
+          <div class="sphere-3d w-full h-full bg-gradient-to-br from-amber-400 to-yellow-600 rounded-full shadow-lg opacity-55 sm:opacity-65"></div>
+        </div>
+
+        <!-- More geometric shapes for mobile -->
+        <div class="floating-cube-3 absolute w-12 sm:w-16 md:w-20 h-12 sm:h-16 md:h-20 transform-gpu top-1/5 right-2/3">
+          <div class="cube-3d">
+            <div class="cube-face cube-front bg-gradient-to-br from-violet-400 to-purple-600 opacity-40 sm:opacity-50"></div>
+            <div class="cube-face cube-back bg-gradient-to-br from-fuchsia-400 to-pink-600 opacity-40 sm:opacity-50"></div>
+            <div class="cube-face cube-right bg-gradient-to-br from-rose-400 to-red-600 opacity-40 sm:opacity-50"></div>
+            <div class="cube-face cube-left bg-gradient-to-br from-orange-400 to-yellow-600 opacity-40 sm:opacity-50"></div>
+            <div class="cube-face cube-top bg-gradient-to-br from-yellow-400 to-green-600 opacity-40 sm:opacity-50"></div>
+            <div class="cube-face cube-bottom bg-gradient-to-br from-green-400 to-blue-600 opacity-40 sm:opacity-50"></div>
+          </div>
+        </div>
+
+        <div class="floating-sphere-4 absolute w-8 sm:w-10 md:w-12 h-8 sm:h-10 md:h-12 top-3/4 left-1/6">
+          <div class="sphere-3d w-full h-full bg-gradient-to-br from-indigo-400 to-purple-600 rounded-full shadow-md opacity-50 sm:opacity-60"></div>
+        </div>
+
+        <!-- Parallax background elements - hidden on mobile for performance -->
+        <div class="hidden sm:block parallax-layer-1 absolute inset-0 opacity-20">
+          <div class="absolute top-1/4 left-1/4 w-2 md:w-3 h-2 md:h-3 bg-white rounded-full animate-pulse"></div>
+          <div class="absolute top-3/4 right-1/4 w-1.5 md:w-2 h-1.5 md:h-2 bg-white rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+          <div class="absolute top-1/2 left-1/3 w-2 md:w-2.5 h-2 md:h-2.5 bg-white rounded-full animate-pulse" style="animation-delay: 2s;"></div>
+          <div class="absolute bottom-1/4 right-1/3 w-2 md:w-3 h-2 md:h-3 bg-white rounded-full animate-pulse" style="animation-delay: 3s;"></div>
+          <div class="absolute top-1/6 right-1/6 w-1.5 md:w-2 h-1.5 md:h-2 bg-white rounded-full animate-pulse" style="animation-delay: 4s;"></div>
+          <div class="absolute bottom-1/3 left-2/3 w-2 md:w-2.5 h-2 md:h-2.5 bg-white rounded-full animate-pulse" style="animation-delay: 5s;"></div>
+        </div>
+
+        <!-- Floating particles - reduced on mobile -->
+        <div class="particle-1 absolute w-1 sm:w-1.5 h-1 sm:h-1.5 bg-white rounded-full opacity-50 sm:opacity-60 top-1/5 left-1/5"></div>
+        <div class="particle-2 absolute w-1.5 sm:w-2 h-1.5 sm:h-2 bg-white rounded-full opacity-40 sm:opacity-50 top-2/3 left-2/3"></div>
+        <div class="particle-3 absolute w-1 sm:w-1.5 h-1 sm:h-1.5 bg-white rounded-full opacity-60 sm:opacity-70 bottom-1/5 left-3/4"></div>
+        <div class="particle-4 absolute w-1.5 sm:w-2.5 h-1.5 sm:h-2.5 bg-white rounded-full opacity-30 sm:opacity-40 top-1/3 right-1/5"></div>
+        <div class="hidden sm:block particle-5 absolute w-1 h-1 bg-white rounded-full opacity-80 bottom-2/5 right-2/3"></div>
+        <div class="hidden sm:block particle-6 absolute w-1.5 h-1.5 bg-white rounded-full opacity-45 top-1/2 left-1/2"></div>
+        <div class="hidden md:block particle-7 absolute w-2 h-2 bg-white rounded-full opacity-55 bottom-1/6 left-1/3"></div>
+        <div class="hidden md:block particle-8 absolute w-1 h-1 bg-white rounded-full opacity-65 top-5/6 right-1/4"></div>
+      </div>
+    </div>
+
+    <!-- Floating Form Card -->
+    <div class="absolute inset-0 z-10 flex items-start justify-center overflow-y-auto">
+      <div class="bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border border-white/20 p-6 sm:p-8 w-full max-w-sm sm:max-w-md mx-4 mt-8 sm:mt-12 md:mt-16 mb-8">
+        <!-- Header -->
+        <div class="text-center mb-6 sm:mb-8">
+          <div class="mx-auto h-16 sm:h-20 w-16 sm:w-20 flex items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 mb-4 sm:mb-6 shadow-lg">
+            <i class="fas fa-graduation-cap text-white text-2xl sm:text-3xl"></i>
+          </div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Learning Tracker</h1>
+            <p class="text-gray-600 mt-2 text-sm sm:text-base">Your personal learning journey starts here</p>
+          </div>
+
+          <!-- Tabs -->
+          <div class="flex mb-6 sm:mb-8 bg-gray-100 rounded-lg p-1">
+            <button id="login-tab" class="flex-1 py-2 px-3 sm:px-4 rounded-md text-sm font-medium transition-all duration-200 bg-white text-indigo-600 shadow-sm">
+              Sign In
+            </button>
+            <button id="register-tab" class="flex-1 py-2 px-3 sm:px-4 rounded-md text-sm font-medium transition-all duration-200 text-gray-500 hover:text-gray-700">
+              Sign Up
+            </button>
+          </div>
+
+          <!-- Login Form -->
+          <div id="login-content" class="tab-content active">
+            <%= form_with scope: :session, url: login_path, local: true, class: "space-y-4 sm:space-y-6" do |form| %>
+              <div>
+                <%= form.label :email, "Email address", class: "block text-sm font-medium text-gray-700 mb-2" %>
+                <%= form.email_field :email, 
+                    class: "w-full px-3 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base",
+                    placeholder: "Enter your email",
+                    required: true,
+                    autocomplete: "email" %>
+              </div>
+              
+              <div>
+                <%= form.label :password, "Password", class: "block text-sm font-medium text-gray-700 mb-2" %>
+                <%= form.password_field :password,
+                    class: "w-full px-3 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base",
+                    placeholder: "Enter your password",
+                    required: true,
+                    autocomplete: "current-password" %>
+              </div>
+
+              <div class="pt-2">
+                <%= form.submit "Sign In", 
+                    class: "w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 sm:py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-sm sm:text-base" %>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Register Form -->
+          <div id="register-content" class="tab-content">
+            <%= form_with model: User.new, url: users_path, local: true, class: "space-y-4 sm:space-y-6" do |form| %>
+              <div>
+                <%= form.label :name, "Full Name", class: "block text-sm font-medium text-gray-700 mb-2" %>
+                <%= form.text_field :name, 
+                    class: "w-full px-3 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base",
+                    placeholder: "Enter your full name",
+                    required: true %>
+              </div>
+              
+              <div>
+                <%= form.label :email, "Email address", class: "block text-sm font-medium text-gray-700 mb-2" %>
+                <%= form.email_field :email, 
+                    class: "w-full px-3 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base",
+                    placeholder: "Enter your email",
+                    required: true,
+                    autocomplete: "email" %>
+              </div>
+              
+              <div>
+                <%= form.label :password, "Password", class: "block text-sm font-medium text-gray-700 mb-2" %>
+                <%= form.password_field :password,
+                    class: "w-full px-3 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base",
+                    placeholder: "Create a password",
+                    required: true,
+                    autocomplete: "new-password" %>
+              </div>
+
+              <div>
+                <%= form.label :password_confirmation, "Confirm Password", class: "block text-sm font-medium text-gray-700 mb-2" %>
+                <%= form.password_field :password_confirmation,
+                    class: "w-full px-3 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base",
+                    placeholder: "Confirm your password",
+                    required: true,
+                    autocomplete: "new-password" %>
+              </div>
+
+              <div class="pt-2">
+                <%= form.submit "Create Account", 
+                    class: "w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 sm:py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-sm sm:text-base" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript for Tabs -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const loginTab = document.getElementById('login-tab');
+        const registerTab = document.getElementById('register-tab');
+        const loginContent = document.getElementById('login-content');
+        const registerContent = document.getElementById('register-content');
+
+        loginTab.addEventListener('click', function() {
+          // Update tab styles
+          loginTab.classList.add('bg-white', 'text-indigo-600', 'shadow-sm');
+          loginTab.classList.remove('text-gray-500');
+          registerTab.classList.remove('bg-white', 'text-indigo-600', 'shadow-sm');
+          registerTab.classList.add('text-gray-500');
+
+          // Update content visibility
+          loginContent.classList.add('active');
+          registerContent.classList.remove('active');
+        });
+
+        registerTab.addEventListener('click', function() {
+          // Update tab styles
+          registerTab.classList.add('bg-white', 'text-indigo-600', 'shadow-sm');
+          registerTab.classList.remove('text-gray-500');
+          loginTab.classList.remove('bg-white', 'text-indigo-600', 'shadow-sm');
+          loginTab.classList.add('text-gray-500');
+
+          // Update content visibility
+          registerContent.classList.add('active');
+          loginContent.classList.remove('active');
+        });
+
+        // Auto-hide flash messages
+        setTimeout(function() {
+          const flashMessages = document.querySelectorAll('[role="alert"]');
+          flashMessages.forEach(function(message) {
+            message.style.opacity = '0';
+            message.style.transform = 'translateX(100%)';
+            setTimeout(function() {
+              message.remove();
+            }, 300);
+          });
+        }, 5000);
+      });
+    </script>
+  </body>
+</html>

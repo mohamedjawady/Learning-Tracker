@@ -1,17 +1,33 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  title: MyString
-  content: MyText
-  parent_id: 1
+# Notes for testing
+course_note:
+  title: "Rails Notes"
+  content: "<h2>Rails Learning Notes</h2><p>Important concepts about Rails development.</p>"
+  parent_id: 
   position: 1
-  tags: MyString
-  user_id: 1
+  tags: "rails, development"
+  is_folder: false
+  color: "#ffffff"
+  notable_type: "Course"
+  notable_id: 1
 
-two:
-  title: MyString
-  content: MyText
-  parent_id: 1
-  position: 1
-  tags: MyString
-  user_id: 1
+book_note:
+  title: "Clean Code Notes"
+  content: "<h3>Clean Code Principles</h3><ul><li>Meaningful names</li><li>Small functions</li></ul>"
+  parent_id: 
+  position: 2
+  tags: "clean-code, best-practices"
+  is_folder: false
+  color: "#f0f9ff"
+  notable_type: "Book"
+  notable_id: 1
+
+folder_note:
+  title: "General Notes"
+  content: ""
+  parent_id: 
+  position: 3
+  tags: "general"
+  is_folder: true
+  color: "#fef3c7"
+  notable_type: 
+  notable_id: 

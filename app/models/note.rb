@@ -1,11 +1,20 @@
 class Note < ApplicationRecord
+  include Searchable
+  
+  belongs_to :user
   belongs_to :parent, class_name: 'Note', optional: true
   has_many :children, class_name: 'Note', foreign_key: 'parent_id', dependent: :destroy
   belongs_to :notable, polymorphic: true, optional: true
 
-  validates :title, presence: true
+  # Enhanced validations
+  validates :title, presence: true, length: { minimum: 1, maximum: 200 }
+  validates :content, length: { maximum: 50000 }
   validates :position, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :color, format: { with: /\A#[0-9a-fA-F]{6}\z/, message: "must be a valid hex color" }
+  
+  # Custom validations
+  validate :parent_belongs_to_same_user
+  validate :sanitize_inputs
 
   scope :root_notes, -> { where(parent_id: nil) }
   scope :folders, -> { where(is_folder: true) }
@@ -70,5 +79,18 @@ class Note < ApplicationRecord
       new_pos = index >= position ? index + 1 : index
       sibling.update_column(:position, new_pos) if sibling.position != new_pos
     end
+  end
+  
+  private
+  
+  def parent_belongs_to_same_user
+    return unless parent && parent.user != user
+    
+    errors.add(:parent, "must belong to the same user")
+  end
+  
+  def sanitize_inputs
+    self.title = title&.strip
+    self.content = content&.strip if content
   end
 end

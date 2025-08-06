@@ -1,23 +1,22 @@
-# Learning Tracke### 📖 Learning Resources Management
+# 📚 Learning Tracker
+
+A comprehensive personal learning management system built with Ruby on Rails. Track your courses, books, articles, notes, and todos all in one place with advanced authentication, analytics, and security features.
+
+## ✨ Features
+
+### 🔐 Authentication & Security
+- Secure user authentication with bcrypt
+- Session-based login/logout
+- User registration and profile management
+- Rate limiting protection
+- Input sanitization and validation
+- CSRF and XSS protection
+
+### 📖 Learning Resources Management
 - **Courses**: Track online courses with chapters, videos, and labs - complete with dedicated views
 - **Books**: Manage your reading list with PDF upload and viewer - chapter management included
 - **Articles**: Keep track of articles you want to read
 - **Content Views**: Full CRUD interfaces for chapters, videos, and labs with progress tracking
-
-A personal learning tracker built with Ruby on Rails. Track your progress through courses, books, articles, organize your learning with an integrated calendar and todo system, take hierarchical notes with a rich WYSIWYG editor, and receive smart toast feedback for all your actions.
-
-## Features ✨
-
-### � Notes & Documentation
-- **Hierarchical Notes**: Create organized notes with folder structure
-- **WYSIWYG Editor**: Rich text editing with image support and copy-paste
-- **Resource Links**: Attach notes to specific courses, books, or articles
-- **Tags & Organization**: Categorize and search your notes efficiently
-
-### 🎉 Smart Notifications
-- **Toast Feedback**: Instant visual feedback for all actions
-- **Progress Celebrations**: Motivational messages when completing tasks
-- **Status Updates**: Clear confirmations for create, update, and delete operations
 
 ### �📖 Learning Resources Management
 - **Courses**: Track online courses with chapters, videos, and labs

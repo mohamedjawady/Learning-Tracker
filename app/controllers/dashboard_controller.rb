@@ -1,5 +1,6 @@
 class DashboardController < ApplicationController
   before_action :set_current_date
+  before_action :redirect_if_not_logged_in, only: [:index]
 
   def index
     @courses = Course.includes(:chapters, :videos, :labs).limit(6)
@@ -76,5 +77,11 @@ class DashboardController < ApplicationController
       labs_completed: Lab.where(completed_at: start_of_week..end_of_week).count,
       todos_completed: Todo.where(completed_at: start_of_week..end_of_week).count
     }
+  end
+
+  def redirect_if_not_logged_in
+    unless logged_in?
+      redirect_to auth_path
+    end
   end
 end

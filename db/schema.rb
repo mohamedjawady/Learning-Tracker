@@ -10,63 +10,68 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_05_024720) do
+ActiveRecord::Schema[7.1].define(version: 20250806012943) do
   create_table "articles", force: :cascade do |t|
-    t.string "title"
-    t.string "author"
-    t.string "url"
+    t.integer "user_id", null: false
+    t.string "title", null: false
+    t.string "url", null: false
     t.text "description"
-    t.integer "status"
+    t.string "author"
+    t.date "publication_date"
     t.integer "estimated_read_time"
-    t.integer "time_spent"
+    t.integer "time_spent", default: 0
+    t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "idx_articles_user_id"
   end
 
   create_table "books", force: :cascade do |t|
-    t.string "title"
-    t.string "author"
+    t.integer "user_id", null: false
+    t.string "title", null: false
+    t.string "author", null: false
     t.text "description"
     t.string "isbn"
-    t.integer "status"
-    t.date "start_date"
-    t.date "target_completion_date"
-    t.integer "current_page"
+    t.string "genre"
     t.integer "total_pages"
+    t.integer "current_page", default: 0
+    t.integer "publication_year"
+    t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "idx_books_user_id"
+    t.index ["status"], name: "idx_books_status"
   end
 
   create_table "calendar_events", force: :cascade do |t|
-    t.string "title"
+    t.integer "user_id", null: false
+    t.string "title", null: false
     t.text "description"
-    t.datetime "start_date"
+    t.datetime "start_date", null: false
     t.datetime "end_date"
-    t.string "event_type"
-    t.boolean "all_day"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer "event_type", default: 0
+    t.boolean "all_day", default: false
     t.string "eventable_type"
     t.integer "eventable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "idx_calendar_events_user_id"
   end
 
   create_table "chapters", force: :cascade do |t|
-    t.string "title"
-    t.text "description"
-    t.integer "order_number"
-    t.boolean "completed"
-    t.datetime "completed_at"
     t.integer "course_id"
     t.integer "book_id"
-    t.integer "page_start"
-    t.integer "page_end"
+    t.string "title", null: false
+    t.text "description"
+    t.integer "order_number"
+    t.boolean "completed", default: false
+    t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["book_id"], name: "index_chapters_on_book_id"
-    t.index ["course_id"], name: "index_chapters_on_course_id"
   end
 
   create_table "courses", force: :cascade do |t|
+    t.integer "user_id", null: false
     t.string "title", null: false
     t.text "description"
     t.string "instructor"
@@ -79,68 +84,84 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_05_024720) do
     t.string "difficulty_level"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["status"], name: "index_courses_on_status"
+    t.index ["user_id"], name: "idx_courses_user_id"
+    t.index ["status"], name: "idx_courses_status"
     t.index ["title"], name: "index_courses_on_title"
   end
 
   create_table "labs", force: :cascade do |t|
-    t.string "title"
-    t.text "description"
-    t.integer "order_number"
-    t.boolean "completed"
-    t.datetime "completed_at"
-    t.text "notes"
     t.integer "course_id", null: false
+    t.string "title", null: false
+    t.text "description"
+    t.text "instructions"
+    t.integer "order_number"
+    t.boolean "completed", default: false
+    t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["course_id"], name: "index_labs_on_course_id"
   end
 
   create_table "notes", force: :cascade do |t|
-    t.string "title", limit: 255, null: false
+    t.integer "user_id", null: false
+    t.string "title", null: false
     t.text "content"
+    t.string "notable_type"
+    t.integer "notable_id"
     t.integer "parent_id"
     t.integer "position", default: 0
-    t.string "tags", limit: 255
-    t.integer "user_id"
-    t.string "notable_type", limit: 255
-    t.integer "notable_id"
     t.boolean "is_folder", default: false
-    t.string "color", limit: 255, default: "#ffffff"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.index ["notable_type", "notable_id"], name: "index_notes_on_notable"
-    t.index ["parent_id"], name: "index_notes_on_parent_id"
-    t.index ["position"], name: "index_notes_on_position"
+    t.string "color", default: "#3B82F6"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "idx_notes_user_id"
+  end
+
+  create_table "simple_todos", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "description"
+    t.boolean "completed", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "todos", force: :cascade do |t|
-    t.string "title"
+    t.integer "user_id", null: false
+    t.string "title", null: false
     t.text "description"
     t.integer "priority"
     t.date "due_date"
-    t.boolean "completed"
+    t.boolean "completed", default: false
     t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "idx_todos_user_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "name"
+    t.string "email", null: false
+    t.string "password_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "videos", force: :cascade do |t|
-    t.string "title"
-    t.text "description"
-    t.integer "order_number"
-    t.integer "duration_minutes"
-    t.integer "watched_minutes"
-    t.boolean "completed"
-    t.datetime "completed_at"
     t.integer "course_id", null: false
+    t.string "title", null: false
+    t.text "description"
+    t.string "url"
+    t.integer "duration_minutes"
+    t.integer "order_number"
+    t.boolean "completed", default: false
+    t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["course_id"], name: "index_videos_on_course_id"
   end
 
-  add_foreign_key "chapters", "books"
-  add_foreign_key "chapters", "courses"
-  add_foreign_key "labs", "courses"
-  add_foreign_key "videos", "courses"
+  add_foreign_key "articles", "users"
+  add_foreign_key "books", "users"
+  add_foreign_key "calendar_events", "users"
+  add_foreign_key "courses", "users"
+  add_foreign_key "notes", "users"
+  add_foreign_key "todos", "users"
 end

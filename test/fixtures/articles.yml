@@ -1,0 +1,27 @@
+# Articles for testing
+rails_article:
+  title: "10 Ruby on Rails Best Practices"
+  author: "Rails Community"
+  url: "https://example.com/rails-best-practices"
+  description: "Essential practices for Rails developers"
+  status: 2  # completed
+  estimated_read_time: 15
+  time_spent: 18
+
+javascript_article:
+  title: "JavaScript Async/Await Explained"
+  author: "Tech Blog"
+  url: "https://example.com/async-await"
+  description: "Understanding asynchronous JavaScript"
+  status: 1  # in_progress
+  estimated_read_time: 20
+  time_spent: 12
+
+not_started_article:
+  title: "Database Design Principles"
+  author: "DB Expert"
+  url: "https://example.com/db-design"
+  description: "Fundamentals of good database design"
+  status: 0  # not_started
+  estimated_read_time: 25
+  time_spent: 0

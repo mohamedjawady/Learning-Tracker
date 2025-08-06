@@ -1,12 +1,26 @@
 Rails.application.routes.draw do
+  # Root route - redirects based on authentication status
+  root to: 'dashboard#index'
+  
+  # Authentication routes
+  get '/auth', to: 'auth#index', as: 'auth'
+  get '/login', to: 'sessions#new'
+  post '/login', to: 'sessions#create'
+  get '/logout', to: 'sessions#destroy'
+  delete '/logout', to: 'sessions#destroy'
+  
+  get '/signup', to: 'users#new'
+  get '/register', to: 'users#new', as: 'register'
+  post '/register', to: 'users#create'
+  
+  # User management
+  resources :users, except: [:index]
+  
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by uptime monitors and load balancers.
   get "up" => "rails/health#show", as: :rails_health_check
-
-  # Defines the root path route ("/")
-  root "dashboard#index"
 
   # Learning resources routes
   resources :courses do

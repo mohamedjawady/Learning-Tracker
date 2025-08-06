@@ -1,0 +1,28 @@
+# Todos for testing
+pending_todo:
+  title: "Review Rails authentication chapter"
+  description: "Go through the user authentication section again"
+  priority: 2  # high priority (enum value)
+  due_date: <%= 3.days.from_now.to_date %>
+  completed: false
+
+completed_todo:
+  title: "Setup development environment"
+  description: "Install Ruby, Rails, and configure text editor"
+  priority: 2  # high priority
+  completed: true
+  completed_at: <%= 1.week.ago %>
+
+medium_priority_todo:
+  title: "Read Clean Code chapter 4"
+  description: "Comments chapter in Clean Code book"
+  priority: 1  # medium priority
+  due_date: <%= 5.days.from_now.to_date %>
+  completed: false
+
+low_priority_todo:
+  title: "Practice JavaScript exercises"
+  description: "Complete 5 coding challenges on HackerRank"
+  priority: 0  # low priority
+  due_date: <%= 1.week.from_now.to_date %>
+  completed: false

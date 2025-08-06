@@ -1,0 +1,27 @@
+# Books for testing
+clean_code:
+  title: "Clean Code"
+  author: "Robert C. Martin"
+  description: "A handbook of agile software craftsmanship"
+  isbn: "978-0132350884"
+  status: "in_progress"
+  current_page: 150
+  total_pages: 464
+
+pragmatic_programmer:
+  title: "The Pragmatic Programmer"
+  author: "David Thomas, Andrew Hunt"
+  description: "Your journey to mastery"
+  isbn: "978-0135957059"
+  status: "not_started"
+  current_page: 0
+  total_pages: 352
+
+completed_book:
+  title: "Eloquent JavaScript"
+  author: "Marijn Haverbeke"
+  description: "A modern introduction to programming"
+  isbn: "978-1593279509"
+  status: "completed"
+  current_page: 450
+  total_pages: 450
