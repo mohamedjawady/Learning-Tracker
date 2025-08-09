@@ -2,7 +2,7 @@ class ArticlesController < ApplicationController
   before_action :set_article, only: [:show, :edit, :update, :destroy, :update_progress]
 
   def index
-    @articles = Article.order(:created_at)
+    @articles = current_user.articles.order(:created_at)
     @articles = @articles.where('title ILIKE ?', "%#{params[:search]}%") if params[:search].present?
     @articles = @articles.where(status: params[:status]) if params[:status].present?
   end
@@ -11,11 +11,11 @@ class ArticlesController < ApplicationController
   end
 
   def new
-    @article = Article.new
+    @article = current_user.articles.build
   end
 
   def create
-    @article = Article.new(article_params)
+    @article = current_user.articles.build(article_params)
 
     if @article.save
       redirect_to @article, notice: "📄 Article '#{@article.title}' was successfully created!"
@@ -77,7 +77,7 @@ class ArticlesController < ApplicationController
   private
 
   def set_article
-    @article = Article.find(params[:id])
+    @article = current_user.articles.find(params[:id])
   end
 
   def article_params

@@ -2,7 +2,7 @@ class BooksController < ApplicationController
   before_action :set_book, only: [:show, :edit, :update, :destroy, :update_progress, :viewer]
 
   def index
-    @books = Book.includes(:chapters).order(:created_at)
+    @books = current_user.books.includes(:chapters).order(:created_at)
     @books = @books.where('title ILIKE ?', "%#{params[:search]}%") if params[:search].present?
     @books = @books.where(status: params[:status]) if params[:status].present?
   end
@@ -19,11 +19,11 @@ class BooksController < ApplicationController
   end
 
   def new
-    @book = Book.new
+    @book = current_user.books.build
   end
 
   def create
-    @book = Book.new(book_params)
+    @book = current_user.books.build(book_params)
 
     if @book.save
       redirect_to @book, notice: "📚 Book '#{@book.title}' was successfully created!"
@@ -73,7 +73,7 @@ class BooksController < ApplicationController
   private
 
   def set_book
-    @book = Book.find(params[:id])
+    @book = current_user.books.find(params[:id])
   end
 
   def book_params

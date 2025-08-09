@@ -2,7 +2,7 @@ class CoursesController < ApplicationController
   before_action :set_course, only: [:show, :edit, :update, :destroy, :update_progress]
 
   def index
-    @courses = Course.includes(:chapters, :videos, :labs).order(:created_at)
+    @courses = current_user.courses.includes(:chapters, :videos, :labs).order(:created_at)
     @courses = @courses.where('title ILIKE ?', "%#{params[:search]}%") if params[:search].present?
     @courses = @courses.where(status: params[:status]) if params[:status].present?
   end
@@ -19,11 +19,11 @@ class CoursesController < ApplicationController
   end
 
   def new
-    @course = Course.new
+    @course = current_user.courses.build
   end
 
   def create
-    @course = Course.new(course_params)
+    @course = current_user.courses.build(course_params)
 
     if @course.save
       redirect_to @course, notice: "🎓 Course '#{@course.title}' was successfully created!"
@@ -60,7 +60,7 @@ class CoursesController < ApplicationController
   private
 
   def set_course
-    @course = Course.find(params[:id])
+    @course = current_user.courses.find(params[:id])
   end
 
   def course_params
