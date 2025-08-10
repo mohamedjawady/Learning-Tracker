@@ -47,11 +47,11 @@ class LabsController < ApplicationController
   private
 
   def set_lab
-    @lab = Lab.find(params[:id])
+    @lab = Lab.joins(:course).where(courses: { user: current_user }).find(params[:id])
   end
 
   def set_course
-    @course = Course.find(params[:course_id]) if params[:course_id]
+    @course = current_user.courses.find(params[:course_id]) if params[:course_id]
   end
 
   def lab_params

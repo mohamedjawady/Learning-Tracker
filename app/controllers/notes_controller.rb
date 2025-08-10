@@ -4,12 +4,12 @@ class NotesController < ApplicationController
 
   def index
     @notes = if @notable
-               @notable.notes.root_notes.ordered.includes(:children)
+               current_user.notes.where(notable: @notable).root_notes.ordered.includes(:children)
              else
-               Note.root_notes.ordered.includes(:children)
+               current_user.notes.root_notes.ordered.includes(:children)
              end
-    @new_note = Note.new
-    @new_folder = Note.new(is_folder: true)
+    @new_note = current_user.notes.build
+    @new_folder = current_user.notes.build(is_folder: true)
   end
 
   def show
@@ -17,33 +17,33 @@ class NotesController < ApplicationController
   end
 
   def new
-    @note = Note.new
+    @note = current_user.notes.build
     @note.notable = @notable if @notable
     @note.parent_id = params[:parent_id] if params[:parent_id]
-    @parents = Note.folders.where.not(id: @note.id)
+    @parents = current_user.notes.folders.where.not(id: @note.id)
   end
 
   def create
-    @note = Note.new(note_params)
+    @note = current_user.notes.build(note_params)
     @note.notable = @notable if @notable
 
     if @note.save
       redirect_to notes_path(notable_params), notice: "📝 Note '#{@note.title}' created successfully!"
     else
-      @parents = Note.folders.where.not(id: @note.id)
+      @parents = current_user.notes.folders.where.not(id: @note.id)
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @parents = Note.folders.where.not(id: @note.id)
+    @parents = current_user.notes.folders.where.not(id: @note.id)
   end
 
   def update
     if @note.update(note_params)
       redirect_to @note, notice: "📝 Note '#{@note.title}' updated successfully!"
     else
-      @parents = Note.folders.where.not(id: @note.id)
+      @parents = current_user.notes.folders.where.not(id: @note.id)
       render :edit, status: :unprocessable_entity
     end
   end
@@ -56,7 +56,7 @@ class NotesController < ApplicationController
 
   def move
     if params[:parent_id].present?
-      new_parent = Note.find(params[:parent_id])
+      new_parent = current_user.notes.find(params[:parent_id])
       @note.move_to_parent(new_parent)
     elsif params[:position].present?
       @note.move_to_position(params[:position].to_i)
@@ -70,7 +70,7 @@ class NotesController < ApplicationController
   private
 
   def set_note
-    @note = Note.find(params[:id])
+    @note = current_user.notes.find(params[:id])
   end
 
   def set_notable

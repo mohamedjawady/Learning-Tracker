@@ -2,7 +2,7 @@ class CalendarEventsController < ApplicationController
   before_action :set_calendar_event, only: [:show, :edit, :update, :destroy]
 
   def index
-    @events = CalendarEvent.includes(:eventable).order(:start_date)
+    @events = current_user.calendar_events.includes(:eventable).order(:start_date)
     @events = @events.where('start_date >= ?', params[:start_date]) if params[:start_date].present?
     @events = @events.where('start_date <= ?', params[:end_date]) if params[:end_date].present?
     
@@ -16,32 +16,30 @@ class CalendarEventsController < ApplicationController
   end
 
   def new
-    @calendar_event = CalendarEvent.new
-    @courses = Course.all
-    @books = Book.all
-    @articles = Article.all
+    @calendar_event = current_user.calendar_events.build
+    load_resources
   end
 
   def create
-    @calendar_event = CalendarEvent.new(calendar_event_params)
+    @calendar_event = current_user.calendar_events.build(calendar_event_params)
 
     if @calendar_event.save
       redirect_to calendar_events_path, notice: 'Event was successfully created.'
     else
+      load_resources
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @courses = Course.all
-    @books = Book.all
-    @articles = Article.all
+    load_resources
   end
 
   def update
     if @calendar_event.update(calendar_event_params)
       redirect_to calendar_events_path, notice: 'Event was successfully updated.'
     else
+      load_resources
       render :edit, status: :unprocessable_entity
     end
   end
@@ -54,7 +52,13 @@ class CalendarEventsController < ApplicationController
   private
 
   def set_calendar_event
-    @calendar_event = CalendarEvent.find(params[:id])
+    @calendar_event = current_user.calendar_events.find(params[:id])
+  end
+
+  def load_resources
+    @courses = current_user.courses.order(:title)
+    @books = current_user.books.order(:title)
+    @articles = current_user.articles.order(:title)
   end
 
   def calendar_event_params

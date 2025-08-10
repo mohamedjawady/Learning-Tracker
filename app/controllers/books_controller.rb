@@ -51,15 +51,32 @@ class BooksController < ApplicationController
 
   def update_progress
     if params[:current_page].present?
-      @book.update(current_page: params[:current_page])
-      @book.update_status_based_on_progress
+      Rails.logger.info "Updating book #{@book.id} current_page from #{@book.current_page} to #{params[:current_page]}"
+      
+      if @book.update(current_page: params[:current_page])
+        Rails.logger.info "Successfully updated book current_page to #{@book.current_page}"
+        @book.update_status_based_on_progress
+        
+        render json: { 
+          success: true, 
+          progress: @book.progress_percentage,
+          current_page: @book.current_page,
+          message: "📈 Progress updated to page #{@book.current_page}!"
+        }
+      else
+        Rails.logger.error "Failed to update book: #{@book.errors.full_messages}"
+        render json: { 
+          success: false, 
+          error: "Failed to update progress: #{@book.errors.full_messages.join(', ')}"
+        }, status: :unprocessable_entity
+      end
+    else
+      Rails.logger.error "No current_page parameter provided"
+      render json: { 
+        success: false, 
+        error: "Current page parameter is required"
+      }, status: :bad_request
     end
-    
-    render json: { 
-      success: true, 
-      progress: @book.progress_percentage,
-      message: "📈 Progress updated to page #{@book.current_page}!"
-    }
   end
 
   def viewer

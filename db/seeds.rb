@@ -164,6 +164,8 @@ book1 = Book.create!(
   status: "in_progress",
   current_page: 150,
   total_pages: 464,
+  start_date: 1.month.ago,
+  target_completion_date: 2.months.from_now,
   user: john_user
 )
 
@@ -175,6 +177,7 @@ book2 = Book.create!(
   status: "not_started",
   current_page: 0,
   total_pages: 352,
+  target_completion_date: 3.months.from_now,
   user: jane_user
 )
 

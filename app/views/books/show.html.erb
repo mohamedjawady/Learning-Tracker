@@ -120,7 +120,11 @@
               <% @chapters.each do |chapter| %>
                 <div class="flex items-center justify-between p-3 border rounded-lg <%= chapter.completed? ? 'bg-green-50 border-green-200' : 'bg-white border-gray-200' %>">
                   <div class="flex items-center space-x-3">
-                    <input type="checkbox" <%= 'checked' if chapter.completed? %> onchange="toggleChapter(<%= chapter.id %>)" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                    <input type="checkbox" 
+                           <%= 'checked' if chapter.completed? %> 
+                           onclick="toggleChapter(<%= chapter.id %>)" 
+                           data-turbo="false"
+                           class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
                     <div>
                       <h4 class="text-sm font-medium text-gray-900"><%= chapter.title %></h4>
                       <% if chapter.description.present? %>
@@ -249,19 +253,87 @@
   }
 
   function toggleChapter(chapterId) {
+    // Prevent any default behavior and event bubbling
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const checkbox = event.target;
+    const originalChecked = checkbox.checked;
+    
+    // Disable checkbox during request
+    checkbox.disabled = true;
+    
+    console.log('Toggling chapter:', chapterId, 'to:', originalChecked);
+    
     fetch(`/chapters/${chapterId}/complete`, {
       method: 'PATCH',
       headers: {
         'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({})
+    }).then(response => response.json())
+    .then(data => {
+      console.log('Response data:', data);
+      if (data.success) {
+        showToast(data.message, 'success');
+        
+        // Update the UI immediately for better UX
+        const chapterDiv = checkbox.closest('.flex');
+        if (data.completed) {
+          chapterDiv.classList.remove('bg-white', 'border-gray-200');
+          chapterDiv.classList.add('bg-green-50', 'border-green-200');
+        } else {
+          chapterDiv.classList.remove('bg-green-50', 'border-green-200');
+          chapterDiv.classList.add('bg-white', 'border-gray-200');
+        }
+        
+        // Update progress bars without full page reload
+        updateProgressBars();
+      } else {
+        // Revert checkbox state on error
+        checkbox.checked = !originalChecked;
+        showToast(data.message || 'Failed to update chapter. Please try again.', 'error');
       }
-    }).then(response => {
-      if (response.ok) {
-        showToast('✅ Chapter marked as complete!', 'success');
-        setTimeout(() => location.reload(), 1000);
-      }
-    }).catch(() => {
+    }).catch(error => {
+      console.error('Error updating chapter:', error);
+      // Revert checkbox state on error
+      checkbox.checked = !originalChecked;
       showToast('Failed to update chapter. Please try again.', 'error');
+    }).finally(() => {
+      // Re-enable checkbox
+      checkbox.disabled = false;
+    });
+  }
+
+  // Function to update progress bars without page reload
+  function updateProgressBars() {
+    // Get current chapter completion status
+    const completedCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+    const totalCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+    const completedCount = completedCheckboxes.length;
+    const totalCount = totalCheckboxes.length;
+    const percentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+    
+    // Update the chapters progress section
+    const progressBars = document.querySelectorAll('.progress-fill');
+    progressBars.forEach(bar => {
+      if (bar.parentElement.parentElement.querySelector('.text-gray-500') && 
+          bar.parentElement.parentElement.querySelector('.text-gray-500').textContent.includes('Chapters Progress')) {
+        bar.style.width = percentage + '%';
+        bar.parentElement.parentElement.querySelector('.font-medium').textContent = percentage + '%';
+      }
+    });
+    
+    // Update the completed chapters count
+    const statsElements = document.querySelectorAll('.text-sm.font-medium.text-gray-900');
+    statsElements.forEach(element => {
+      const parent = element.parentElement;
+      if (parent && parent.querySelector('.text-gray-500') && 
+          parent.querySelector('.text-gray-500').textContent.includes('Completed Chapters')) {
+        element.textContent = completedCount;
+      }
     });
   }
 

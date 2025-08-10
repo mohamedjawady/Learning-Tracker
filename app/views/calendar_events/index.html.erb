@@ -53,7 +53,12 @@
                   <%= link_to edit_calendar_event_path(event), class: "text-gray-400 hover:text-gray-600" do %>
                     <i class="fas fa-edit text-sm"></i>
                   <% end %>
-                  <%= link_to event, method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-400 hover:text-red-600" do %>
+                  <%= link_to event, 
+                      data: { 
+                        "turbo-method": "delete",
+                        "turbo-confirm": "Are you sure?" 
+                      }, 
+                      class: "text-red-400 hover:text-red-600" do %>
                     <i class="fas fa-trash text-sm"></i>
                   <% end %>
                 </div>

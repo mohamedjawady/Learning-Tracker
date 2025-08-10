@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   
   # Authentication routes
   get '/auth', to: 'auth#index', as: 'auth'
+  get '/debug', to: 'debug#session_info'
   get '/login', to: 'sessions#new'
   post '/login', to: 'sessions#create'
   get '/logout', to: 'sessions#destroy'

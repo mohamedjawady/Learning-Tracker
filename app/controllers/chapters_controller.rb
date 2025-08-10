@@ -40,18 +40,34 @@ class ChaptersController < ApplicationController
   end
 
   def complete
-    @chapter.update(completed: true, completed_at: Time.current)
-    redirect_back(fallback_location: root_path, notice: "🎉 Chapter '#{@chapter.title}' marked as complete! Great progress!")
+    if @chapter.completed?
+      @chapter.mark_incomplete!
+      message = "📖 Chapter '#{@chapter.title}' marked as incomplete."
+    else
+      @chapter.mark_completed!
+      message = "🎉 Chapter '#{@chapter.title}' marked as complete! Great progress!"
+    end
+    
+    respond_to do |format|
+      format.html { redirect_back(fallback_location: root_path, notice: message) }
+      format.json { render json: { success: true, message: message, completed: @chapter.completed } }
+    end
   end
 
   private
 
   def set_chapter
-    @chapter = Chapter.find(params[:id])
+    # Find chapters that belong to either courses or books owned by current user
+    @chapter = Chapter.joins('LEFT JOIN courses ON chapters.course_id = courses.id')
+                     .joins('LEFT JOIN books ON chapters.book_id = books.id')
+                     .where('courses.user_id = ? OR books.user_id = ?', current_user.id, current_user.id)
+                     .find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to root_path, alert: 'Chapter not found or you do not have permission to access it.'
   end
 
   def set_course
-    @course = Course.find(params[:course_id]) if params[:course_id]
+    @course = current_user.courses.find(params[:course_id]) if params[:course_id]
   end
 
   def chapter_params

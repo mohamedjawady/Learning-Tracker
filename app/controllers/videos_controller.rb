@@ -51,11 +51,11 @@ class VideosController < ApplicationController
   private
 
   def set_video
-    @video = Video.find(params[:id])
+    @video = Video.joins(:course).where(courses: { user: current_user }).find(params[:id])
   end
 
   def set_course
-    @course = Course.find(params[:course_id]) if params[:course_id]
+    @course = current_user.courses.find(params[:course_id]) if params[:course_id]
   end
 
   def video_params

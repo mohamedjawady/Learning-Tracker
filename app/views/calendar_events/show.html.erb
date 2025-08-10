@@ -1,0 +1,166 @@
+<div class="px-4 py-6 sm:px-0">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Event Details</h1>
+    <div class="flex space-x-3">
+      <%= link_to "← Back to Calendar", calendar_events_path, class: "text-indigo-600 hover:text-indigo-500" %>
+      <%= link_to "Edit", edit_calendar_event_path(@calendar_event), class: "bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium" %>
+      <%= button_to "Delete", calendar_event_path(@calendar_event), 
+                    method: :delete, 
+                    data: { confirm: "Are you sure you want to delete this event?" },
+                    class: "bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium" %>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <!-- Event Header -->
+    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-4 h-4 rounded-full <%= @calendar_event.color_class %>"></div>
+        </div>
+        <div class="ml-3">
+          <h2 class="text-xl font-semibold text-gray-900"><%= @calendar_event.title %></h2>
+          <p class="text-sm text-gray-600">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+              <%= @calendar_event.event_type.humanize %>
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event Details -->
+    <div class="px-6 py-6">
+      <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <!-- Start Date -->
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Start Date & Time</dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            <i class="fas fa-calendar-alt text-gray-400 mr-2"></i>
+            <%= @calendar_event.start_date.strftime("%B %d, %Y at %I:%M %p") %>
+          </dd>
+        </div>
+
+        <!-- End Date -->
+        <% if @calendar_event.end_date.present? %>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">End Date & Time</dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            <i class="fas fa-calendar-check text-gray-400 mr-2"></i>
+            <%= @calendar_event.end_date.strftime("%B %d, %Y at %I:%M %p") %>
+          </dd>
+        </div>
+        <% end %>
+
+        <!-- Duration -->
+        <% if @calendar_event.end_date.present? %>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Duration</dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            <i class="fas fa-clock text-gray-400 mr-2"></i>
+            <% duration = ((@calendar_event.end_date - @calendar_event.start_date) / 1.hour).round(1) %>
+            <%= duration == 1 ? "1 hour" : "#{duration} hours" %>
+          </dd>
+        </div>
+        <% end %>
+
+        <!-- All Day Event -->
+        <div>
+          <dt class="text-sm font-medium text-gray-500">All Day Event</dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            <i class="fas fa-sun text-gray-400 mr-2"></i>
+            <%= @calendar_event.all_day? ? "Yes" : "No" %>
+          </dd>
+        </div>
+
+        <!-- Related Content -->
+        <% if @calendar_event.eventable.present? %>
+        <div class="sm:col-span-2">
+          <dt class="text-sm font-medium text-gray-500">Related to</dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            <% case @calendar_event.eventable_type %>
+            <% when 'Course' %>
+              <i class="fas fa-graduation-cap text-blue-500 mr-2"></i>
+              <%= link_to @calendar_event.eventable.title, course_path(@calendar_event.eventable), class: "text-indigo-600 hover:text-indigo-500" %>
+              <span class="text-gray-500">(Course)</span>
+            <% when 'Book' %>
+              <i class="fas fa-book text-green-500 mr-2"></i>
+              <%= link_to @calendar_event.eventable.title, book_path(@calendar_event.eventable), class: "text-indigo-600 hover:text-indigo-500" %>
+              <span class="text-gray-500">(Book)</span>
+            <% when 'Article' %>
+              <i class="fas fa-newspaper text-purple-500 mr-2"></i>
+              <%= link_to @calendar_event.eventable.title, article_path(@calendar_event.eventable), class: "text-indigo-600 hover:text-indigo-500" %>
+              <span class="text-gray-500">(Article)</span>
+            <% else %>
+              <i class="fas fa-link text-gray-400 mr-2"></i>
+              <%= @calendar_event.eventable.title rescue @calendar_event.eventable_type %>
+            <% end %>
+          </dd>
+        </div>
+        <% end %>
+      </dl>
+
+      <!-- Description -->
+      <% if @calendar_event.description.present? %>
+      <div class="mt-6">
+        <dt class="text-sm font-medium text-gray-500 mb-2">Description</dt>
+        <dd class="text-sm text-gray-900 bg-gray-50 rounded-md p-4">
+          <%= simple_format(@calendar_event.description) %>
+        </dd>
+      </div>
+      <% end %>
+    </div>
+
+    <!-- Metadata -->
+    <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+      <div class="flex justify-between items-center text-xs text-gray-500">
+        <div>
+          <i class="fas fa-plus-circle mr-1"></i>
+          Created <%= time_ago_in_words(@calendar_event.created_at) %> ago
+        </div>
+        <% if @calendar_event.updated_at != @calendar_event.created_at %>
+        <div>
+          <i class="fas fa-edit mr-1"></i>
+          Updated <%= time_ago_in_words(@calendar_event.updated_at) %> ago
+        </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="mt-6 bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+    <div class="flex space-x-4">
+      <%= link_to calendar_events_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+        <i class="fas fa-calendar mr-2"></i>
+        View All Events
+      <% end %>
+      
+      <%= link_to new_calendar_event_path, class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" do %>
+        <i class="fas fa-plus mr-2"></i>
+        Add New Event
+      <% end %>
+
+      <% if @calendar_event.eventable.present? %>
+        <% case @calendar_event.eventable_type %>
+        <% when 'Course' %>
+          <%= link_to course_path(@calendar_event.eventable), class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+            <i class="fas fa-graduation-cap mr-2"></i>
+            View Course
+          <% end %>
+        <% when 'Book' %>
+          <%= link_to book_path(@calendar_event.eventable), class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" do %>
+            <i class="fas fa-book mr-2"></i>
+            View Book
+          <% end %>
+        <% when 'Article' %>
+          <%= link_to article_path(@calendar_event.eventable), class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" do %>
+            <i class="fas fa-newspaper mr-2"></i>
+            View Article
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

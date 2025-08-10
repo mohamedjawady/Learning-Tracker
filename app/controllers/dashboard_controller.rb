@@ -1,8 +1,13 @@
 class DashboardController < ApplicationController
   before_action :set_current_date
-  before_action :redirect_if_not_logged_in, only: [:index]
 
   def index
+    # Additional safety check - this shouldn't be needed with proper authentication
+    unless current_user
+      redirect_to auth_path, alert: "Please log in to access your dashboard."
+      return
+    end
+    
     @courses = current_user.courses.includes(:chapters, :videos, :labs).limit(6)
     @books = current_user.books.includes(:chapters).limit(6)
     @articles = current_user.articles.limit(6)
@@ -92,11 +97,5 @@ class DashboardController < ApplicationController
                         .count,
       todos_completed: current_user.todos.where(completed_at: start_of_week..end_of_week).count
     }
-  end
-
-  def redirect_if_not_logged_in
-    unless logged_in?
-      redirect_to auth_path
-    end
   end
 end

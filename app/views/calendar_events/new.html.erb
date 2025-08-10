@@ -101,9 +101,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const eventableIdSelect = document.getElementById('eventable_id_select');
   
   const resourceOptions = {
-    Course: <%= raw @courses.map { |c| [c.title, c.id] }.to_json %>,
-    Book: <%= raw @books.map { |b| [b.title, b.id] }.to_json %>,
-    Article: <%= raw @articles.map { |a| [a.title, a.id] }.to_json %>
+    Course: <%= raw (@courses&.map { |c| [c.title, c.id] } || []).to_json %>,
+    Book: <%= raw (@books&.map { |b| [b.title, b.id] } || []).to_json %>,
+    Article: <%= raw (@articles&.map { |a| [a.title, a.id] } || []).to_json %>
   };
   
   eventableTypeSelect.addEventListener('change', function() {

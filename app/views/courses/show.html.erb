@@ -72,6 +72,14 @@
     
     <!-- Chapters Tab -->
     <div id="chapters-tab" class="tab-content p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-medium text-gray-900">Course Chapters</h3>
+        <%= link_to new_course_chapter_path(@course), class: "inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" do %>
+          <i class="fas fa-plus mr-2"></i>
+          Add Chapter
+        <% end %>
+      </div>
+      
       <% if @course.chapters.any? %>
         <div class="space-y-4">
           <% @course.chapters.order(:order_number).each do |chapter| %>
@@ -92,20 +100,39 @@
                   <% end %>
                 </div>
               </div>
-              <% unless chapter.completed? %>
-                <%= button_to "Mark Complete", complete_chapter_path(chapter), method: :patch, 
-                    class: "px-3 py-1 text-xs font-medium text-white bg-green-600 rounded hover:bg-green-700" %>
-              <% end %>
+              <div class="flex space-x-2">
+                <%= link_to edit_chapter_path(chapter), class: "px-2 py-1 text-xs font-medium text-blue-600 hover:text-blue-800" do %>
+                  <i class="fas fa-edit"></i>
+                <% end %>
+                <% unless chapter.completed? %>
+                  <%= button_to "Mark Complete", complete_chapter_path(chapter), method: :patch, 
+                      class: "px-3 py-1 text-xs font-medium text-white bg-green-600 rounded hover:bg-green-700" %>
+                <% end %>
+              </div>
             </div>
           <% end %>
         </div>
       <% else %>
-        <p class="text-gray-500 text-center py-8">No chapters added yet.</p>
+        <div class="text-center py-8">
+          <p class="text-gray-500 mb-4">No chapters added yet.</p>
+          <%= link_to new_course_chapter_path(@course), class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" do %>
+            <i class="fas fa-plus mr-2"></i>
+            Add Your First Chapter
+          <% end %>
+        </div>
       <% end %>
     </div>
     
     <!-- Videos Tab -->
     <div id="videos-tab" class="tab-content p-6 hidden">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-medium text-gray-900">Course Videos</h3>
+        <%= link_to new_course_video_path(@course), class: "inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" do %>
+          <i class="fas fa-plus mr-2"></i>
+          Add Video
+        <% end %>
+      </div>
+      
       <% if @course.videos.any? %>
         <div class="space-y-4">
           <% @course.videos.order(:order_number).each do |video| %>
@@ -138,20 +165,40 @@
                   <% end %>
                 </div>
               </div>
-              <% unless video.completed? %>
-                <%= button_to "Mark Complete", complete_video_path(video), method: :patch, 
-                    class: "px-3 py-1 text-xs font-medium text-white bg-green-600 rounded hover:bg-green-700" %>
-              <% end %>
+              <div class="flex space-x-2">
+                <%= link_to edit_video_path(video), class: "px-2 py-1 text-xs font-medium text-blue-600 hover:text-blue-800" do %>
+                  <i class="fas fa-edit"></i>
+                <% end %>
+                <% unless video.completed? %>
+                  <%= button_to "Mark Complete", complete_video_path(video), method: :patch, 
+                      class: "px-3 py-1 text-xs font-medium text-white bg-green-600 rounded hover:bg-green-700" %>
+                <% end %>
+              </div>
             </div>
           <% end %>
         </div>
       <% else %>
-        <p class="text-gray-500 text-center py-8">No videos added yet.</p>
+        <div class="text-center py-8">
+          <p class="text-gray-500 mb-4">No videos added yet.</p>
+          <%= link_to new_course_video_path(@course), class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" do %>
+            <i class="fas fa-plus mr-2"></i>
+            Add Your First Video
+          <% end %>
+        </div>
       <% end %>
+    </div>
     </div>
     
     <!-- Labs Tab -->
     <div id="labs-tab" class="tab-content p-6 hidden">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-medium text-gray-900">Course Labs</h3>
+        <%= link_to new_course_lab_path(@course), class: "inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" do %>
+          <i class="fas fa-plus mr-2"></i>
+          Add Lab
+        <% end %>
+      </div>
+      
       <% if @course.labs.any? %>
         <div class="space-y-4">
           <% @course.labs.order(:order_number).each do |lab| %>
@@ -175,15 +222,26 @@
                   <% end %>
                 </div>
               </div>
-              <% unless lab.completed? %>
-                <%= button_to "Mark Complete", complete_lab_path(lab), method: :patch, 
-                    class: "px-3 py-1 text-xs font-medium text-white bg-green-600 rounded hover:bg-green-700" %>
-              <% end %>
+              <div class="flex space-x-2">
+                <%= link_to edit_lab_path(lab), class: "px-2 py-1 text-xs font-medium text-blue-600 hover:text-blue-800" do %>
+                  <i class="fas fa-edit"></i>
+                <% end %>
+                <% unless lab.completed? %>
+                  <%= button_to "Mark Complete", complete_lab_path(lab), method: :patch, 
+                      class: "px-3 py-1 text-xs font-medium text-white bg-green-600 rounded hover:bg-green-700" %>
+                <% end %>
+              </div>
             </div>
           <% end %>
         </div>
       <% else %>
-        <p class="text-gray-500 text-center py-8">No labs added yet.</p>
+        <div class="text-center py-8">
+          <p class="text-gray-500 mb-4">No labs added yet.</p>
+          <%= link_to new_course_lab_path(@course), class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" do %>
+            <i class="fas fa-plus mr-2"></i>
+            Add Your First Lab
+          <% end %>
+        </div>
       <% end %>
     </div>
   </div>

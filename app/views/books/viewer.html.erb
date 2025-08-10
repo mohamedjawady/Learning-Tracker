@@ -354,6 +354,12 @@
       }
       
       function updateBookProgress() {
+        const button = event.target;
+        const originalText = button.textContent;
+        
+        button.textContent = 'Updating...';
+        button.disabled = true;
+        
         fetch('<%= update_progress_book_path(@book) %>', {
           method: 'PATCH',
           headers: {
@@ -361,18 +367,47 @@
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({ current_page: pageNum })
-        }).then(response => {
-          if (response.ok) {
-            // Show success message
-            const button = event.target;
-            const originalText = button.textContent;
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
             button.textContent = 'Updated!';
+            button.classList.remove('bg-green-600');
             button.classList.add('bg-green-700');
+            console.log('Progress updated successfully:', data);
+            
             setTimeout(() => {
               button.textContent = originalText;
               button.classList.remove('bg-green-700');
+              button.classList.add('bg-green-600');
+              button.disabled = false;
             }, 2000);
+          } else {
+            button.textContent = 'Error!';
+            button.classList.remove('bg-green-600');
+            button.classList.add('bg-red-600');
+            console.error('Failed to update progress:', data.error);
+            
+            setTimeout(() => {
+              button.textContent = originalText;
+              button.classList.remove('bg-red-600');
+              button.classList.add('bg-green-600');
+              button.disabled = false;
+            }, 3000);
           }
+        })
+        .catch(error => {
+          button.textContent = 'Error!';
+          button.classList.remove('bg-green-600');
+          button.classList.add('bg-red-600');
+          console.error('Network error:', error);
+          
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.classList.remove('bg-red-600');
+            button.classList.add('bg-green-600');
+            button.disabled = false;
+          }, 3000);
         });
       }
       

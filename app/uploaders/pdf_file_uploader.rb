@@ -10,7 +10,7 @@ class PdfFileUploader < CarrierWave::Uploader::Base
   end
 
   def content_type_allowlist
-    /pdf/
+    ['application/pdf']
   end
 
   def filename
