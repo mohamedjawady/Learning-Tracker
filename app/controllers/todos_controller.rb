@@ -2,7 +2,7 @@ class TodosController < ApplicationController
   before_action :set_todo, only: [:show, :edit, :update, :destroy, :toggle_complete]
 
   def index
-    @todos = Todo.order(:priority, :created_at)
+    @todos = current_user.todos.order(:priority, :created_at)
     @pending_todos = @todos.pending
     @completed_todos = @todos.completed
   end
@@ -11,11 +11,11 @@ class TodosController < ApplicationController
   end
 
   def new
-    @todo = Todo.new
+    @todo = current_user.todos.build
   end
 
   def create
-    @todo = Todo.new(todo_params)
+    @todo = current_user.todos.build(todo_params)
 
     if @todo.save
       redirect_to todos_path, notice: 'Todo was successfully created.'
@@ -49,7 +49,7 @@ class TodosController < ApplicationController
   private
 
   def set_todo
-    @todo = Todo.find(params[:id])
+    @todo = current_user.todos.find(params[:id])
   end
 
   def todo_params

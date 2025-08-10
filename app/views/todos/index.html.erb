@@ -47,7 +47,9 @@
                   <%= link_to edit_todo_path(todo), class: "text-gray-400 hover:text-gray-600" do %>
                     <i class="fas fa-edit text-sm"></i>
                   <% end %>
-                  <%= link_to todo, method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-400 hover:text-red-600" do %>
+                  <%= button_to todo, method: :delete, data: { confirm: "Are you sure?" }, 
+                      form: { style: "display: inline;" }, 
+                      class: "text-red-400 hover:text-red-600 border-none bg-transparent p-0" do %>
                     <i class="fas fa-trash text-sm"></i>
                   <% end %>
                 </div>
@@ -91,7 +93,9 @@
                 </div>
                 
                 <div class="flex space-x-2">
-                  <%= link_to todo, method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-400 hover:text-red-600" do %>
+                  <%= button_to todo, method: :delete, data: { confirm: "Are you sure?" }, 
+                      form: { style: "display: inline;" }, 
+                      class: "text-red-400 hover:text-red-600 border-none bg-transparent p-0" do %>
                     <i class="fas fa-trash text-sm"></i>
                   <% end %>
                 </div>
